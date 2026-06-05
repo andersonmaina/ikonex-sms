@@ -7,8 +7,12 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+import classStreamsRouter from './routes/classStreams';
+
 app.use(cors());
 app.use(express.json());
+
+app.use('/api/class-streams', classStreamsRouter);
 
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok', message: 'Ikonex: healthy' });
