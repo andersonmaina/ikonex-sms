@@ -5,6 +5,7 @@ import StudentDirectory from '../pages/StudentDirectory';
 import StudentProfile from '../pages/StudentProfile';
 import Subjects from '../pages/Subjects';
 import Assessments from '../pages/Assessments';
+import Analytics from '../pages/Analytics';
 import NotFound from '../pages/NotFound';
 import Layout from '../components/Layout';
 
@@ -36,6 +37,10 @@ export const router = createBrowserRouter([
       {
         path: 'assessments',
         element: <Assessments />,
+      },
+      {
+        path: 'analytics',
+        element: <Analytics />,
       },
     ],
   },

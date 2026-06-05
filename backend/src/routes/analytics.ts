@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { supabase } from '../supabase';
+import { GRADING_SYSTEM, getGradeFromPercentage } from '../utils/constants';
 
 const router = Router();
 
@@ -32,8 +33,11 @@ router.get('/overview', async (req: Request, res: Response): Promise<void> => {
     });
 
     // Calculate a rough GPA out of 4.0 based on percentage
-    const percentage = totalMax > 0 ? (totalScore / totalMax) : 0;
-    const avgGPA = percentage > 0 ? (percentage * 4.0).toFixed(1) : "0.0";
+    const percentage = totalMax > 0 ? (totalScore / totalMax) * 100 : 0;
+    
+    // Use our new constants to get the precise GPA value for the school average!
+    const gradeObj = getGradeFromPercentage(percentage);
+    const avgGPA = totalMax > 0 ? gradeObj.gpaValue.toFixed(1) : "0.0";
 
     res.json({
       data: {
@@ -69,21 +73,26 @@ router.get('/class-performance', async (req: Request, res: Response): Promise<vo
     // Calculate stats
     let passed = 0;
     let failed = 0;
-    const distribution = { A: 0, B: 0, C: 0, D: 0, F: 0 };
+    
+    // Dynamically initialize distribution based on constants
+    const distribution: Record<string, number> = {};
+    GRADING_SYSTEM.GRADES.forEach(g => {
+      distribution[g.label] = 0;
+    });
+
     let totalPct = 0;
     
     grades?.forEach((g: any) => {
       const pct = (g.score / (g.assessments?.max_score || 100)) * 100;
       totalPct += pct;
       
-      if (pct >= 50) passed++;
+      // Determine Pass/Fail from constants
+      if (pct >= GRADING_SYSTEM.PASS_THRESHOLD) passed++;
       else failed++;
 
-      if (pct >= 80) distribution.A++;
-      else if (pct >= 70) distribution.B++;
-      else if (pct >= 60) distribution.C++;
-      else if (pct >= 50) distribution.D++;
-      else distribution.F++;
+      // Determine Letter Grade dynamically
+      const grade = getGradeFromPercentage(pct);
+      distribution[grade.label]++;
     });
 
     const avgScore = grades && grades.length > 0 ? (totalPct / grades.length).toFixed(1) : 0;
@@ -94,7 +103,8 @@ router.get('/class-performance', async (req: Request, res: Response): Promise<vo
         avgScore,
         passed,
         failed,
-        distribution
+        distribution,
+        gradingSystem: GRADING_SYSTEM.GRADES // We send this to frontend to map dynamically
       }
     });
   } catch (err: any) {
