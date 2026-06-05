@@ -3,8 +3,8 @@ import { NavLink } from 'react-router-dom';
 
 const navItems = [
   { name: 'Dashboard', icon: 'dashboard', path: '/' },
-  { name: 'Class Streams', icon: 'calendar_view_day', path: '/class-streams' },
-  { name: 'Students', icon: 'group', path: '/students' },
+  { name: 'Class Streams', icon: 'account_tree', path: '/class-streams' },
+  { name: 'Students', icon: 'groups', path: '/students' },
   { name: 'Subjects', icon: 'book', path: '/subjects' },
   { name: 'Assessments', icon: 'assignment', path: '/assessments' },
   { name: 'Analytics', icon: 'analytics', path: '/analytics' },
@@ -12,13 +12,13 @@ const navItems = [
 
 const Sidebar = () => {
   return (
-    <aside className="hidden md:flex w-[280px] h-screen sticky left-0 top-0 bg-surface-container-low border-r border-outline-variant flex-col py-lg px-md gap-sm z-50">
+    <aside className="hidden md:flex w-[280px] h-screen sticky left-0 top-0 bg-surface-container-low border-r border-outline-variant flex-col py-lg px-md gap-sm z-50 no-print">
       <div className="flex items-center gap-md px-md mb-xl">
-        <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-on-primary">
+        <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-on-primary shadow-lg">
           <span className="material-symbols-outlined">school</span>
         </div>
         <div>
-          <h1 className="font-headline-lg text-headline-lg font-bold text-primary">Ikonex Academy</h1>
+          <h1 className="font-headline-lg text-headline-lg font-bold text-primary tracking-tight">Ikonex SMS</h1>
           <p className="font-label-md text-label-md text-on-surface-variant">Academic Management</p>
         </div>
       </div>
@@ -29,7 +29,7 @@ const Sidebar = () => {
             to={item.path}
             className={({ isActive }) =>
               `flex items-center gap-md px-md py-sm rounded-lg transition-all active:scale-[0.98] ${
-                isActive
+                isActive || (item.path !== '/' && window.location.pathname.startsWith(item.path))
                   ? 'text-primary font-bold bg-surface-container-high'
                   : 'text-on-surface-variant hover:bg-surface-container-high'
               }`
@@ -39,7 +39,7 @@ const Sidebar = () => {
               <>
                 <span
                   className="material-symbols-outlined"
-                  style={isActive ? { fontVariationSettings: "'FILL' 1" } : undefined}
+                  style={(isActive || (item.path !== '/' && window.location.pathname.startsWith(item.path))) ? { fontVariationSettings: "'FILL' 1" } : undefined}
                 >
                   {item.icon}
                 </span>

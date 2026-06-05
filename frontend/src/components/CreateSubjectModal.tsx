@@ -1,0 +1,181 @@
+import React, { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
+
+interface CreateSubjectModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
+const fetchStreams = async () => {
+  const { data } = await axios.get(`${API_URL}/api/class-streams`);
+  return data.data;
+};
+
+const createSubject = async (newSubject: any) => {
+  const { data } = await axios.post(`${API_URL}/api/subjects`, newSubject);
+  return data.data;
+};
+
+export const CreateSubjectModal: React.FC<CreateSubjectModalProps> = ({ isOpen, onClose }) => {
+  const queryClient = useQueryClient();
+  const [name, setName] = useState('');
+  const [code, setCode] = useState('');
+  const [department, setDepartment] = useState('');
+  const [credits, setCredits] = useState('3.0');
+  const [selectedStreams, setSelectedStreams] = useState<string[]>([]);
+
+  const { data: streams, isLoading: isLoadingStreams } = useQuery({
+    queryKey: ['classStreams'],
+    queryFn: fetchStreams,
+    enabled: isOpen,
+  });
+
+  const mutation = useMutation({
+    mutationFn: createSubject,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['subjects'] });
+      // Reset form
+      setName('');
+      setCode('');
+      setDepartment('');
+      setCredits('3.0');
+      setSelectedStreams([]);
+      onClose();
+    },
+    onError: (err: any) => {
+      alert(`Error creating subject: ${err.response?.data?.error || err.message}`);
+    }
+  });
+
+  if (!isOpen) return null;
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    mutation.mutate({
+      name,
+      code,
+      department,
+      credits: parseFloat(credits) || 3.0,
+      stream_ids: selectedStreams
+    });
+  };
+
+  const toggleStream = (streamId: string) => {
+    setSelectedStreams(prev => 
+      prev.includes(streamId) 
+        ? prev.filter(id => id !== streamId)
+        : [...prev, streamId]
+    );
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-md bg-on-surface/40 backdrop-blur-sm">
+      <div className="bg-surface w-full max-w-lg rounded-2xl shadow-xl overflow-hidden animate-in fade-in zoom-in duration-200">
+        <div className="p-lg border-b border-outline-variant flex justify-between items-center bg-surface-container-low">
+          <h2 className="font-headline-md text-headline-md text-primary font-bold">Add New Subject</h2>
+          <button onClick={onClose} className="p-2 text-on-surface-variant hover:text-error transition-colors rounded-full hover:bg-error-container/20">
+            <span className="material-symbols-outlined">close</span>
+          </button>
+        </div>
+        
+        <form onSubmit={handleSubmit} className="p-lg space-y-md">
+          <div className="grid grid-cols-2 gap-md">
+            <div>
+              <label className="block text-label-md font-bold text-on-surface-variant mb-1">Subject Name</label>
+              <input 
+                required
+                type="text" 
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="e.g. Advanced Mathematics" 
+                className="w-full px-md py-sm bg-surface-container-low border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all font-body-md"
+              />
+            </div>
+            <div>
+              <label className="block text-label-md font-bold text-on-surface-variant mb-1">Subject Code</label>
+              <input 
+                required
+                type="text" 
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                placeholder="e.g. MATH-401" 
+                className="w-full px-md py-sm bg-surface-container-low border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all font-body-md uppercase"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-md">
+            <div>
+              <label className="block text-label-md font-bold text-on-surface-variant mb-1">Department</label>
+              <input 
+                type="text" 
+                value={department}
+                onChange={(e) => setDepartment(e.target.value)}
+                placeholder="e.g. Sciences" 
+                className="w-full px-md py-sm bg-surface-container-low border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all font-body-md"
+              />
+            </div>
+            <div>
+              <label className="block text-label-md font-bold text-on-surface-variant mb-1">Credits / Weight</label>
+              <input 
+                required
+                type="number"
+                step="0.1" 
+                value={credits}
+                onChange={(e) => setCredits(e.target.value)}
+                className="w-full px-md py-sm bg-surface-container-low border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all font-body-md"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-label-md font-bold text-on-surface-variant mb-1">Assign to Streams</label>
+            <div className="flex flex-wrap gap-sm max-h-32 overflow-y-auto p-sm bg-surface-container-low border border-outline-variant rounded-lg">
+              {isLoadingStreams ? (
+                 <span className="text-on-surface-variant text-sm">Loading streams...</span>
+              ) : streams?.length === 0 ? (
+                 <span className="text-on-surface-variant text-sm">No streams available. Create a stream first.</span>
+              ) : (
+                streams?.map((stream: any) => (
+                  <button
+                    key={stream.id}
+                    type="button"
+                    onClick={() => toggleStream(stream.id)}
+                    className={`px-sm py-1 rounded-full border text-[11px] font-bold transition-colors ${
+                      selectedStreams.includes(stream.id)
+                        ? 'bg-primary text-on-primary border-primary'
+                        : 'bg-surface text-on-surface-variant border-outline-variant hover:border-primary/50'
+                    }`}
+                  >
+                    {stream.name} ({stream.code})
+                  </button>
+                ))
+              )}
+            </div>
+          </div>
+          
+          <div className="pt-md mt-lg border-t border-outline-variant flex justify-end gap-sm">
+            <button 
+              type="button" 
+              onClick={onClose}
+              className="px-lg py-2 rounded-lg font-label-md text-primary hover:bg-surface-container-high transition-colors"
+            >
+              Cancel
+            </button>
+            <button 
+              type="submit" 
+              disabled={mutation.isPending || isLoadingStreams}
+              className="px-lg py-2 rounded-lg font-label-md bg-primary text-on-primary hover:bg-primary-container transition-colors shadow-md disabled:opacity-70 flex items-center gap-2"
+            >
+              {mutation.isPending && <span className="material-symbols-outlined animate-spin text-[18px]">autorenew</span>}
+              Save Subject
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
