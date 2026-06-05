@@ -4,6 +4,7 @@ import ClassStreams from '../pages/ClassStreams';
 import StudentDirectory from '../pages/StudentDirectory';
 import StudentProfile from '../pages/StudentProfile';
 import Subjects from '../pages/Subjects';
+import Assessments from '../pages/Assessments';
 import NotFound from '../pages/NotFound';
 import Layout from '../components/Layout';
 
@@ -31,6 +32,10 @@ export const router = createBrowserRouter([
       {
         path: 'subjects',
         element: <Subjects />,
+      },
+      {
+        path: 'assessments',
+        element: <Assessments />,
       },
     ],
   },
