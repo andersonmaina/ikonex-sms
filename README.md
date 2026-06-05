@@ -1,6 +1,6 @@
 # Ikonex Academy
 
-A school management system for managing students, subjects, assessments, and generating report cards.
+A school management system for managing students, subjects, assessments, analysis and generating report cards.
 
 ## Stack
 

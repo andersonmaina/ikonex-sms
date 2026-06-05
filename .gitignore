@@ -9,3 +9,4 @@ backend/dist/
 frontend/.env.local
 backend/.env
 tests/
+designs/
