@@ -39,4 +39,70 @@ router.get('/student/:id', async (req: Request, res: Response): Promise<void> =>
   }
 });
 
+// GET assessments
+router.get('/assessments', async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { data, error } = await supabase
+      .from('assessments')
+      .select('*, class_streams(name, code)')
+      .order('date', { ascending: false });
+    
+    if (error) throw error;
+    res.json({ data });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST new assessment
+router.post('/assessments', async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { title, type, max_score, stream_id, date } = req.body;
+    const { data, error } = await supabase
+      .from('assessments')
+      .insert([{ title, type, max_score, stream_id, date }])
+      .select()
+      .single();
+      
+    if (error) throw error;
+    res.status(201).json({ data });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET scores for a specific assessment
+router.get('/assessments/:id/scores', async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { data, error } = await supabase
+      .from('student_grades')
+      .select('*')
+      .eq('assessment_id', req.params.id);
+      
+    if (error) throw error;
+    res.json({ data });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST grade
+router.post('/scores', async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { student_id, assessment_id, score } = req.body;
+    
+    // Upsert the score (insert or update)
+    const { data, error } = await supabase
+      .from('student_grades')
+      .upsert({ student_id, assessment_id, score }, { onConflict: 'student_id,assessment_id' })
+      .select()
+      .single();
+      
+    if (error) throw error;
+    res.json({ data });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 export default router;
