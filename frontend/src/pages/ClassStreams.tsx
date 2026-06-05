@@ -1,7 +1,8 @@
-import React from 'react';
-import { useQuery } from '@tanstack/react-query';
+import React, { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { GlassCard } from '../components/ui/GlassCard';
+import { CreateStreamModal } from '../components/CreateStreamModal';
 
 interface ClassStream {
   id: string;
@@ -11,16 +12,36 @@ interface ClassStream {
   created_at: string;
 }
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
 const fetchStreams = async (): Promise<ClassStream[]> => {
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
   const { data } = await axios.get(`${API_URL}/api/class-streams`);
   return data.data;
 };
 
+const createStream = async (newStream: { name: string; code: string; capacity: number }) => {
+  const { data } = await axios.post(`${API_URL}/api/class-streams`, newStream);
+  return data.data;
+};
+
 const ClassStreams = () => {
+  const queryClient = useQueryClient();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const { data: streams, isLoading, isError } = useQuery({
     queryKey: ['classStreams'],
     queryFn: fetchStreams,
+  });
+
+  const mutation = useMutation({
+    mutationFn: createStream,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['classStreams'] });
+      setIsModalOpen(false);
+    },
+    onError: (err: any) => {
+      alert(`Error creating stream: ${err.response?.data?.error || err.message}`);
+    }
   });
 
   return (
@@ -33,7 +54,10 @@ const ClassStreams = () => {
             Organize and manage academic sections for the current session.
           </p>
         </div>
-        <button className="bg-primary text-on-primary px-lg py-md rounded-lg flex items-center gap-sm font-label-md text-label-md hover:bg-primary-container transition-colors shadow-md active:scale-95">
+        <button 
+          onClick={() => setIsModalOpen(true)}
+          className="bg-primary text-on-primary px-lg py-md rounded-lg flex items-center gap-sm font-label-md text-label-md hover:bg-primary-container transition-colors shadow-md active:scale-95"
+        >
           <span className="material-symbols-outlined" data-icon="add_circle">add_circle</span>
           Create New Stream
         </button>
@@ -83,8 +107,23 @@ const ClassStreams = () => {
               </div>
             </GlassCard>
           ))}
+
+          {/* Empty State / Add New Button styled as card */}
+          <button onClick={() => setIsModalOpen(true)} className="bg-surface border-2 border-dashed border-outline-variant rounded-xl flex flex-col items-center justify-center gap-md p-lg hover:border-primary hover:bg-primary-container/5 transition-all group min-h-[160px]">
+             <div className="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                <span className="material-symbols-outlined !text-2xl">add</span>
+             </div>
+             <p className="font-headline-md text-primary text-center">Add New Stream</p>
+          </button>
         </div>
       )}
+
+      <CreateStreamModal 
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={(data) => mutation.mutate(data)}
+        isLoading={mutation.isPending}
+      />
     </div>
   );
 };
