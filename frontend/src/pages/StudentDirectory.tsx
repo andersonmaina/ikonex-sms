@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 import { CreateStudentModal } from '../components/CreateStudentModal';
 
 interface Student {
@@ -134,9 +135,9 @@ const StudentDirectory = () => {
                     </td>
                     <td className="px-lg py-md text-right">
                       <div className="flex justify-end gap-xs opacity-40 group-hover:opacity-100 transition-opacity">
-                        <button className="p-2 hover:bg-surface-container rounded-lg text-on-surface-variant transition-colors" title="View Profile">
+                        <Link to={`/students/${student.id}`} className="p-2 hover:bg-surface-container rounded-lg text-on-surface-variant transition-colors" title="View Profile">
                           <span className="material-symbols-outlined text-[20px]">visibility</span>
-                        </button>
+                        </Link>
                         <button className="p-2 hover:bg-surface-container rounded-lg text-primary transition-colors" title="Edit">
                           <span className="material-symbols-outlined text-[20px]">edit</span>
                         </button>
