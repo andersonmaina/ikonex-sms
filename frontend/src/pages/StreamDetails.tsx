@@ -109,21 +109,19 @@ const StreamDetails = () => {
               <tr className="bg-surface-container-low text-label-md text-primary border-b border-outline-variant uppercase tracking-wider">
                 <th className="px-lg py-4">Student Name</th>
                 <th className="px-lg py-4">Admission #</th>
-                <th className="px-lg py-4">Gender</th>
                 <th className="px-lg py-4 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-outline-variant/30">
               {isLoadingStudents ? (
-                <tr><td colSpan={4} className="p-lg text-center">Loading students...</td></tr>
+                <tr><td colSpan={3} className="p-lg text-center">Loading students...</td></tr>
               ) : students?.length === 0 ? (
-                <tr><td colSpan={4} className="p-lg text-center text-on-surface-variant">No students in this stream.</td></tr>
+                <tr><td colSpan={3} className="p-lg text-center text-on-surface-variant">No students in this stream.</td></tr>
               ) : (
                 students?.map((student: any) => (
                   <tr key={student.id} className="hover:bg-surface-container-low transition-colors">
                     <td className="px-lg py-md font-bold">{student.first_name} {student.last_name}</td>
                     <td className="px-lg py-md font-mono text-sm">{student.admission_number}</td>
-                    <td className="px-lg py-md">{student.gender || '-'}</td>
                     <td className="px-lg py-md text-right">
                       <Link to={`/students/${student.id}`} className="text-primary hover:underline font-label-sm">
                         View Profile
