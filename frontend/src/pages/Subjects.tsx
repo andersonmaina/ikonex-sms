@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { CreateSubjectModal } from '../components/CreateSubjectModal';
 
@@ -22,13 +22,40 @@ const fetchSubjects = async (): Promise<Subject[]> => {
   return data.data;
 };
 
+const deleteSubjectApi = async (id: string) => {
+  await axios.delete(`${API_URL}/api/subjects/${id}`);
+};
+
 const Subjects = () => {
+  const queryClient = useQueryClient();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [subjectToEdit, setSubjectToEdit] = useState<Subject | undefined>(undefined);
 
   const { data: subjects, isLoading, isError } = useQuery({
     queryKey: ['subjects'],
     queryFn: fetchSubjects,
   });
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteSubjectApi,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['subjects'] });
+    },
+    onError: (err: any) => {
+      alert(`Error deleting subject: ${err.response?.data?.error || err.message}`);
+    }
+  });
+
+  const handleEdit = (subject: Subject) => {
+    setSubjectToEdit(subject);
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = (id: string) => {
+    if (window.confirm('Are you sure you want to delete this subject? This action cannot be undone.')) {
+      deleteMutation.mutate(id);
+    }
+  };
 
   return (
     <div className="p-lg flex flex-col gap-lg overflow-y-auto w-full max-w-[1440px] mx-auto">
@@ -41,7 +68,10 @@ const Subjects = () => {
           </p>
         </div>
         <button 
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => {
+            setSubjectToEdit(undefined);
+            setIsModalOpen(true);
+          }}
           className="bg-primary text-on-primary px-lg py-3 rounded-lg flex items-center gap-sm font-label-md text-label-md font-bold shadow-md hover:brightness-110 active:scale-95 transition-all"
         >
           <span className="material-symbols-outlined">add</span>
@@ -50,7 +80,7 @@ const Subjects = () => {
       </section>
 
       {/* Stats Bento Grid */}
-      <section className="grid grid-cols-1 md:grid-cols-4 gap-md">
+      <section className="grid grid-cols-1 md:grid-cols-3 gap-md">
         <div className="bg-surface-container-lowest border border-outline-variant p-md rounded-xl flex items-center gap-md">
           <div className="w-12 h-12 rounded-lg bg-primary-container text-on-primary-container flex items-center justify-center">
             <span className="material-symbols-outlined">library_books</span>
@@ -71,15 +101,7 @@ const Subjects = () => {
             </p>
           </div>
         </div>
-        <div className="bg-surface-container-lowest border border-outline-variant p-md rounded-xl flex items-center gap-md">
-          <div className="w-12 h-12 rounded-lg bg-surface-container text-on-primary-container flex items-center justify-center">
-            <span className="material-symbols-outlined">verified</span>
-          </div>
-          <div>
-            <p className="font-label-md text-label-md text-on-surface-variant">Accredited</p>
-            <p className="font-headline-md text-headline-md font-bold text-primary">{subjects?.length || 0}</p>
-          </div>
-        </div>
+
         <div className="bg-surface-container-lowest border border-outline-variant p-md rounded-xl flex items-center gap-md">
           <div className="w-12 h-12 rounded-lg bg-error-container text-on-error-container flex items-center justify-center">
             <span className="material-symbols-outlined">warning</span>
@@ -166,10 +188,16 @@ const Subjects = () => {
                     </td>
                     <td className="px-lg py-md text-right">
                       <div className="flex items-center justify-end gap-sm opacity-50 group-hover:opacity-100 transition-opacity">
-                        <button className="p-2 text-on-surface-variant hover:text-primary hover:bg-surface-container rounded transition-all">
+                        <button 
+                          onClick={() => handleEdit(subject)}
+                          className="p-2 text-on-surface-variant hover:text-primary hover:bg-surface-container rounded transition-all"
+                        >
                           <span className="material-symbols-outlined">edit</span>
                         </button>
-                        <button className="p-2 text-on-surface-variant hover:text-error hover:bg-error-container/20 rounded transition-all">
+                        <button 
+                          onClick={() => handleDelete(subject.id)}
+                          className="p-2 text-on-surface-variant hover:text-error hover:bg-error-container/20 rounded transition-all"
+                        >
                           <span className="material-symbols-outlined">delete</span>
                         </button>
                       </div>
@@ -184,7 +212,11 @@ const Subjects = () => {
 
       <CreateSubjectModal 
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => {
+          setIsModalOpen(false);
+          setSubjectToEdit(undefined);
+        }}
+        subjectToEdit={subjectToEdit}
       />
     </div>
   );

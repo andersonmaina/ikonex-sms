@@ -5,6 +5,7 @@ import axios from 'axios';
 interface CreateSubjectModalProps {
   isOpen: boolean;
   onClose: () => void;
+  subjectToEdit?: any;
 }
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -14,18 +15,34 @@ const fetchStreams = async () => {
   return data.data;
 };
 
-const createSubject = async (newSubject: any) => {
-  const { data } = await axios.post(`${API_URL}/api/subjects`, newSubject);
+const saveSubject = async ({ id, ...subjectData }: any) => {
+  if (id) {
+    const { data } = await axios.put(`${API_URL}/api/subjects/${id}`, subjectData);
+    return data.data;
+  }
+  const { data } = await axios.post(`${API_URL}/api/subjects`, subjectData);
   return data.data;
 };
 
-export const CreateSubjectModal: React.FC<CreateSubjectModalProps> = ({ isOpen, onClose }) => {
+export const CreateSubjectModal = ({ isOpen, onClose, subjectToEdit }: CreateSubjectModalProps) => {
   const queryClient = useQueryClient();
-  const [name, setName] = useState('');
-  const [code, setCode] = useState('');
-  const [department, setDepartment] = useState('');
-  const [credits, setCredits] = useState('3.0');
-  const [selectedStreams, setSelectedStreams] = useState<string[]>([]);
+  const [name, setName] = React.useState(subjectToEdit?.name || '');
+  const [code, setCode] = React.useState(subjectToEdit?.code || '');
+  const [department, setDepartment] = React.useState(subjectToEdit?.department || '');
+  const [credits, setCredits] = React.useState(subjectToEdit?.credits?.toString() || '3.0');
+  const [selectedStreams, setSelectedStreams] = React.useState<string[]>(
+    subjectToEdit?.subject_assignments?.map((a: any) => a.class_streams.id) || []
+  );
+
+  React.useEffect(() => {
+    if (isOpen) {
+      setName(subjectToEdit?.name || '');
+      setCode(subjectToEdit?.code || '');
+      setDepartment(subjectToEdit?.department || '');
+      setCredits(subjectToEdit?.credits?.toString() || '3.0');
+      setSelectedStreams(subjectToEdit?.subject_assignments?.map((a: any) => a.class_streams.id) || []);
+    }
+  }, [isOpen, subjectToEdit]);
 
   const { data: streams, isLoading: isLoadingStreams } = useQuery({
     queryKey: ['classStreams'],
@@ -34,19 +51,13 @@ export const CreateSubjectModal: React.FC<CreateSubjectModalProps> = ({ isOpen, 
   });
 
   const mutation = useMutation({
-    mutationFn: createSubject,
+    mutationFn: saveSubject,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['subjects'] });
-      // Reset form
-      setName('');
-      setCode('');
-      setDepartment('');
-      setCredits('3.0');
-      setSelectedStreams([]);
       onClose();
     },
     onError: (err: any) => {
-      alert(`Error creating subject: ${err.response?.data?.error || err.message}`);
+      alert(`Error saving subject: ${err.response?.data?.error || err.message}`);
     }
   });
 
@@ -55,6 +66,7 @@ export const CreateSubjectModal: React.FC<CreateSubjectModalProps> = ({ isOpen, 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     mutation.mutate({
+      id: subjectToEdit?.id,
       name,
       code,
       department,
@@ -75,7 +87,9 @@ export const CreateSubjectModal: React.FC<CreateSubjectModalProps> = ({ isOpen, 
     <div className="fixed inset-0 z-50 flex items-center justify-center p-md bg-on-surface/40 backdrop-blur-sm">
       <div className="bg-surface w-full max-w-lg rounded-2xl shadow-xl overflow-hidden animate-in fade-in zoom-in duration-200">
         <div className="p-lg border-b border-outline-variant flex justify-between items-center bg-surface-container-low">
-          <h2 className="font-headline-md text-headline-md text-primary font-bold">Add New Subject</h2>
+          <h2 className="font-headline-md text-headline-md text-primary font-bold">
+            {subjectToEdit ? 'Edit Subject' : 'Add New Subject'}
+          </h2>
           <button onClick={onClose} className="p-2 text-on-surface-variant hover:text-error transition-colors rounded-full hover:bg-error-container/20">
             <span className="material-symbols-outlined">close</span>
           </button>
@@ -166,12 +180,15 @@ export const CreateSubjectModal: React.FC<CreateSubjectModalProps> = ({ isOpen, 
               Cancel
             </button>
             <button 
-              type="submit" 
-              disabled={mutation.isPending || isLoadingStreams}
-              className="px-lg py-2 rounded-lg font-label-md bg-primary text-on-primary hover:bg-primary-container transition-colors shadow-md disabled:opacity-70 flex items-center gap-2"
+              type="submit"
+              disabled={mutation.isPending}
+              className="px-md py-sm bg-primary text-on-primary rounded-lg font-label-md font-bold hover:brightness-110 active:scale-95 transition-all flex items-center justify-center min-w-[120px]"
             >
-              {mutation.isPending && <span className="material-symbols-outlined animate-spin text-[18px]">autorenew</span>}
-              Save Subject
+              {mutation.isPending ? (
+                <span className="material-symbols-outlined animate-spin">autorenew</span>
+              ) : (
+                subjectToEdit ? 'SAVE CHANGES' : 'CREATE SUBJECT'
+              )}
             </button>
           </div>
         </form>
