@@ -3,9 +3,39 @@ import { supabase } from '../supabase';
 import puppeteer from 'puppeteer';
 import ejs from 'ejs';
 import path from 'path';
+import fs from 'fs';
+import { execSync } from 'child_process';
 import { getGradeFromPercentage, GRADING_SYSTEM } from '../utils/constants';
 
 const router = Router();
+
+function findChromiumPath(): string | undefined {
+  // 1. Check if environment variable points to a valid file
+  const envPath = process.env.PUPPETEER_EXECUTABLE_PATH;
+  if (envPath && fs.existsSync(envPath)) {
+    return envPath;
+  }
+
+  // 2. Try to find chromium in the system PATH
+  try {
+    const path = execSync('which chromium', { stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim();
+    if (path && fs.existsSync(path)) {
+      return path;
+    }
+  } catch (e) {
+    // Try Windows alternative if 'which' fails
+    try {
+      const path = execSync('where chromium', { stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim().split('\r\n')[0];
+      if (path && fs.existsSync(path)) {
+        return path;
+      }
+    } catch (winError) {
+      // Ignore
+    }
+  }
+
+  return undefined;
+}
 
 async function launchBrowser() {
   const options = {
@@ -18,40 +48,32 @@ async function launchBrowser() {
     ]
   };
 
-  const originalEnvPath = process.env.PUPPETEER_EXECUTABLE_PATH;
-
-  try {
+  const chromiumPath = findChromiumPath();
+  
+  if (chromiumPath) {
+    console.log(`Launching Puppeteer with Chromium at: ${chromiumPath}`);
     return await puppeteer.launch({
       ...options,
-      executablePath: originalEnvPath || undefined,
+      executablePath: chromiumPath,
     });
-  } catch (error) {
-    console.warn(`Failed to launch browser with path '${originalEnvPath}':`, error);
-    
-    // Temporarily delete env var so Puppeteer doesn't read it under the hood during fallbacks
-    if (process.env.PUPPETEER_EXECUTABLE_PATH) {
-      delete process.env.PUPPETEER_EXECUTABLE_PATH;
-    }
+  }
 
-    try {
-      console.log("Attempting fallback to 'chromium' binary in PATH...");
-      const browser = await puppeteer.launch({
-        ...options,
-        executablePath: 'chromium',
-      });
-      process.env.PUPPETEER_EXECUTABLE_PATH = originalEnvPath;
-      return browser;
-    } catch (fallbackError) {
-      console.warn("Failed to launch with 'chromium' in PATH. Trying default Puppeteer launch...");
-      try {
-        const browser = await puppeteer.launch(options);
-        process.env.PUPPETEER_EXECUTABLE_PATH = originalEnvPath;
-        return browser;
-      } catch (finalError) {
-        process.env.PUPPETEER_EXECUTABLE_PATH = originalEnvPath;
-        throw finalError;
-      }
-    }
+  console.warn("No system Chromium path resolved. Launching Puppeteer with default options...");
+  
+  // If we have an environment variable set but it doesn't exist, we must temporarily delete it
+  // so Puppeteer doesn't read it under the hood and throw.
+  const originalEnvPath = process.env.PUPPETEER_EXECUTABLE_PATH;
+  if (process.env.PUPPETEER_EXECUTABLE_PATH) {
+    delete process.env.PUPPETEER_EXECUTABLE_PATH;
+  }
+
+  try {
+    const browser = await puppeteer.launch(options);
+    process.env.PUPPETEER_EXECUTABLE_PATH = originalEnvPath;
+    return browser;
+  } catch (error) {
+    process.env.PUPPETEER_EXECUTABLE_PATH = originalEnvPath;
+    throw error;
   }
 }
 
