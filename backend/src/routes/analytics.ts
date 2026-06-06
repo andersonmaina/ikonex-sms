@@ -19,31 +19,17 @@ router.get('/overview', async (req: Request, res: Response): Promise<void> => {
       .select('*', { count: 'exact', head: true });
     if (err2) throw err2;
 
-    // 3. Average grade proxy (average of all scores)
-    const { data: scores, error: err3 } = await supabase
-      .from('student_grades')
-      .select('score, assessments(max_score)');
+    // 3. Total Subjects
+    const { count: subjectCount, error: err3 } = await supabase
+      .from('subjects')
+      .select('*', { count: 'exact', head: true });
     if (err3) throw err3;
-
-    let totalScore = 0;
-    let totalMax = 0;
-    scores?.forEach((g: any) => {
-      totalScore += Number(g.score);
-      totalMax += Number(g.assessments?.max_score || 100);
-    });
-
-    // Calculate average grade based on percentage
-    const percentage = totalMax > 0 ? (totalScore / totalMax) * 100 : 0;
-    
-    // Use our constants to get the average grade
-    const gradeObj = getGradeFromPercentage(percentage);
-    const avgGrade = totalMax > 0 ? gradeObj.label : "N/A";
 
     res.json({
       data: {
         totalStudents: studentCount || 0,
         activeStreams: streamCount || 0,
-        averageGrade: avgGrade
+        totalSubjects: subjectCount || 0
       }
     });
   } catch (err: any) {
