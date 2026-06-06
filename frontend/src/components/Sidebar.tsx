@@ -54,13 +54,6 @@ const Sidebar = () => {
           href="#"
           className="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all"
         >
-          <span className="material-symbols-outlined">settings</span>
-          <span className="font-label-md text-label-md">Settings</span>
-        </a>
-        <a
-          href="#"
-          className="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all"
-        >
           <span className="material-symbols-outlined">logout</span>
           <span className="font-label-md text-label-md">Logout</span>
         </a>

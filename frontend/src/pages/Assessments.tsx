@@ -206,6 +206,10 @@ const Assessments = () => {
                   <span className="material-symbols-outlined text-[16px]">groups</span>
                   {a.class_streams?.name || 'All Streams'}
                 </p>
+                <p className="text-on-surface-variant text-sm flex items-center gap-xs mt-1 mb-2">
+                  <span className="material-symbols-outlined text-[16px]">book</span>
+                  {a.subjects?.name || 'General'}
+                </p>
                 <div className="mt-auto pt-md border-t border-outline-variant flex justify-between items-center group-hover:text-primary transition-colors">
                   <span className="text-sm font-bold text-outline">Max Score: {a.max_score}</span>
                   <span className="material-symbols-outlined">arrow_forward</span>

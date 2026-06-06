@@ -30,6 +30,7 @@ export const CreateSubjectModal = ({ isOpen, onClose, subjectToEdit }: CreateSub
   const [code, setCode] = React.useState(subjectToEdit?.code || '');
   const [department, setDepartment] = React.useState(subjectToEdit?.department || '');
   const [credits, setCredits] = React.useState(subjectToEdit?.credits?.toString() || '3.0');
+  const [examType, setExamType] = React.useState(subjectToEdit?.exam_type || 'Both');
   const [selectedStreams, setSelectedStreams] = React.useState<string[]>(
     subjectToEdit?.subject_assignments?.map((a: any) => a.class_streams.id) || []
   );
@@ -40,6 +41,7 @@ export const CreateSubjectModal = ({ isOpen, onClose, subjectToEdit }: CreateSub
       setCode(subjectToEdit?.code || '');
       setDepartment(subjectToEdit?.department || '');
       setCredits(subjectToEdit?.credits?.toString() || '3.0');
+      setExamType(subjectToEdit?.exam_type || 'Both');
       setSelectedStreams(subjectToEdit?.subject_assignments?.map((a: any) => a.class_streams.id) || []);
     }
   }, [isOpen, subjectToEdit]);
@@ -71,6 +73,7 @@ export const CreateSubjectModal = ({ isOpen, onClose, subjectToEdit }: CreateSub
       code,
       department,
       credits: parseFloat(credits) || 3.0,
+      exam_type: examType,
       stream_ids: selectedStreams
     });
   };
@@ -132,6 +135,21 @@ export const CreateSubjectModal = ({ isOpen, onClose, subjectToEdit }: CreateSub
                 className="w-full px-md py-sm bg-surface-container-low border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all font-body-md"
               />
             </div>
+            <div>
+              <label className="block text-label-md font-bold text-on-surface-variant mb-1">Exam Type</label>
+              <select 
+                value={examType}
+                onChange={(e) => setExamType(e.target.value)}
+                className="w-full px-md py-sm bg-surface-container-low border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all font-body-md"
+              >
+                <option value="Both">Both (CAT & Exam)</option>
+                <option value="CAT">CAT Only</option>
+                <option value="Exam">Exam Only</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-md">
             <div>
               <label className="block text-label-md font-bold text-on-surface-variant mb-1">Credits / Weight</label>
               <input 

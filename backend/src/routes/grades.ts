@@ -44,7 +44,7 @@ router.get('/assessments', async (req: Request, res: Response): Promise<void> =>
   try {
     const { data, error } = await supabase
       .from('assessments')
-      .select('*, class_streams(name, code)')
+      .select('*, class_streams(name, code), subjects(name)')
       .order('date', { ascending: false });
     
     if (error) throw error;
@@ -57,10 +57,10 @@ router.get('/assessments', async (req: Request, res: Response): Promise<void> =>
 // POST new assessment
 router.post('/assessments', async (req: Request, res: Response): Promise<void> => {
   try {
-    const { title, type, max_score, stream_id, date } = req.body;
+    const { title, type, max_score, stream_id, date, subject_id } = req.body;
     const { data, error } = await supabase
       .from('assessments')
-      .insert([{ title, type, max_score, stream_id, date }])
+      .insert([{ title, type, max_score, stream_id, date, subject_id }])
       .select()
       .single();
       

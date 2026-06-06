@@ -23,6 +23,7 @@ export const CreateAssessmentModal: React.FC<CreateAssessmentModalProps> = ({ is
   const [type, setType] = useState('Exam');
   const [maxScore, setMaxScore] = useState('100');
   const [streamId, setStreamId] = useState('');
+  const [subjectId, setSubjectId] = useState('');
   const [date, setDate] = useState('');
 
   const { data: streams } = useQuery({
@@ -34,6 +35,30 @@ export const CreateAssessmentModal: React.FC<CreateAssessmentModalProps> = ({ is
     enabled: isOpen,
   });
 
+  const { data: subjects } = useQuery({
+    queryKey: ['subjects'],
+    queryFn: async () => {
+      const { data } = await axios.get(`${API_URL}/api/subjects`);
+      return data.data;
+    },
+    enabled: isOpen,
+  });
+
+  const filteredSubjects = streamId 
+    ? subjects?.filter((subj: any) => subj.subject_assignments.some((a: any) => a.class_streams.id === streamId))
+    : subjects;
+
+  const handleSubjectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const sId = e.target.value;
+    setSubjectId(sId);
+    if (sId) {
+      const subj = subjects?.find((s: any) => s.id === sId);
+      if (subj && subj.exam_type && subj.exam_type !== 'Both') {
+        setType(subj.exam_type);
+      }
+    }
+  };
+
   const mutation = useMutation({
     mutationFn: createAssessment,
     onSuccess: () => {
@@ -42,6 +67,7 @@ export const CreateAssessmentModal: React.FC<CreateAssessmentModalProps> = ({ is
       setType('Exam');
       setMaxScore('100');
       setStreamId('');
+      setSubjectId('');
       setDate('');
       onClose();
     },
@@ -59,6 +85,7 @@ export const CreateAssessmentModal: React.FC<CreateAssessmentModalProps> = ({ is
       type,
       max_score: parseInt(maxScore) || 100,
       stream_id: streamId || null,
+      subject_id: subjectId || null,
       date
     });
   };
@@ -120,6 +147,21 @@ export const CreateAssessmentModal: React.FC<CreateAssessmentModalProps> = ({ is
             >
               <option value="">All Streams</option>
               {streams?.map((s: any) => (
+                <option key={s.id} value={s.id}>{s.name} ({s.code})</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-label-md font-bold text-on-surface-variant mb-1">Subject</label>
+            <select
+              required
+              value={subjectId}
+              onChange={handleSubjectChange}
+              className="w-full px-md py-sm bg-surface-container-low border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all font-body-md"
+            >
+              <option value="">Select a Subject</option>
+              {filteredSubjects?.map((s: any) => (
                 <option key={s.id} value={s.id}>{s.name} ({s.code})</option>
               ))}
             </select>
