@@ -32,6 +32,7 @@ const GradeEntryForm = ({ assessment, onBack }: { assessment: Assessment, onBack
     queryKey: ['students', assessment.stream_id],
     queryFn: async () => {
       const { data } = await axios.get(`${API_URL}/api/students`);
+      if (!assessment.stream_id) return data.data;
       return data.data.filter((s: any) => s.stream_id === assessment.stream_id);
     }
   });
@@ -90,7 +91,7 @@ const GradeEntryForm = ({ assessment, onBack }: { assessment: Assessment, onBack
         <div>
           <h3 className="font-headline-md text-primary">{assessment.title}</h3>
           <p className="text-label-sm text-on-surface-variant uppercase tracking-wider">
-            {assessment.class_streams?.name} • Max Score: {assessment.max_score}
+            {assessment.class_streams?.name || 'All Streams'} • Max Score: {assessment.max_score}
           </p>
         </div>
         <button 
