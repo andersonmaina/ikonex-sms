@@ -9,16 +9,6 @@ const Analytics = () => {
   const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
   const streamId = searchParams.get('streamId') || '';
-  const subjectId = searchParams.get('subjectId') || '';
-
-  const updateParams = (newParams: Record<string, string>) => {
-    const params = Object.fromEntries(searchParams.entries());
-    Object.assign(params, newParams);
-    Object.keys(params).forEach(k => {
-      if (!params[k]) delete params[k];
-    });
-    setSearchParams(params);
-  };
 
   const { data: streams } = useQuery({
     queryKey: ['classStreams'],
@@ -28,19 +18,11 @@ const Analytics = () => {
     }
   });
 
-  const { data: subjects } = useQuery({
-    queryKey: ['subjects'],
-    queryFn: async () => {
-      const { data } = await axios.get(`${API_URL}/api/subjects`);
-      return data.data;
-    }
-  });
-
   const { data: analytics, isLoading } = useQuery({
-    queryKey: ['analytics', streamId, subjectId],
+    queryKey: ['analytics', streamId],
     queryFn: async () => {
       const { data } = await axios.get(`${API_URL}/api/analytics/class-performance`, {
-        params: { streamId, subjectId }
+        params: { streamId }
       });
       return data.data;
     }
@@ -64,22 +46,15 @@ const Analytics = () => {
           </button>
           <div className="relative">
             <select 
-              value={subjectId}
-              onChange={(e) => updateParams({ subjectId: e.target.value })}
-              className="appearance-none flex items-center gap-sm px-md py-sm bg-surface border border-outline-variant rounded-lg text-body-md font-semibold text-primary shadow-sm hover:bg-surface-container-low transition-colors pr-10"
-            >
-              <option value="">All Subjects</option>
-              {subjects?.map((s: any) => (
-                <option key={s.id} value={s.id}>{s.name} ({s.code})</option>
-              ))}
-            </select>
-            <span className="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-primary">expand_more</span>
-          </div>
-
-          <div className="relative">
-            <select 
               value={streamId}
-              onChange={(e) => updateParams({ streamId: e.target.value })}
+              onChange={(e) => {
+                const newStreamId = e.target.value;
+                if (newStreamId) {
+                  setSearchParams({ streamId: newStreamId });
+                } else {
+                  setSearchParams({});
+                }
+              }}
               className="appearance-none flex items-center gap-sm px-md py-sm bg-surface border border-outline-variant rounded-lg text-body-md font-semibold text-primary shadow-sm hover:bg-surface-container-low transition-colors pr-10"
             >
               <option value="">All Streams</option>

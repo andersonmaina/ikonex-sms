@@ -55,20 +55,16 @@ router.get('/overview', async (req: Request, res: Response): Promise<void> => {
 router.get('/class-performance', async (req: Request, res: Response): Promise<void> => {
   try {
     const streamId = req.query.streamId as string;
-    const subjectId = req.query.subjectId as string;
     
     // In a real app we'd filter by streamId, but for now we aggregate broadly or specific if provided
     let query = supabase.from('student_grades').select(`
       score,
-      assessments!inner ( id, title, max_score, type, date, stream_id, subject_id ),
+      assessments ( id, title, max_score, type, date, stream_id ),
       students!inner ( id, first_name, last_name, stream_id )
     `);
 
     if (streamId) {
       query = query.eq('students.stream_id', streamId);
-    }
-    if (subjectId) {
-      query = query.eq('assessments.subject_id', subjectId);
     }
 
     const { data: grades, error } = await query;
