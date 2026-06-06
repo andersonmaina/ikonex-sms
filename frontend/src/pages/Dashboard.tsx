@@ -29,10 +29,6 @@ const Dashboard = () => {
           >
             <span className="material-symbols-outlined">refresh</span>
           </button>
-          <button className="bg-primary text-on-primary px-lg py-3 rounded-lg font-label-md flex items-center gap-sm hover:opacity-90 transition-opacity active:scale-[0.98]">
-            <span className="material-symbols-outlined">add</span>
-            Generate Report
-          </button>
         </div>
       </section>
 
