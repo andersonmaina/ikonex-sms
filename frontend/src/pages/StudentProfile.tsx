@@ -127,49 +127,6 @@ const StudentProfile = () => {
           </div>
         </div>
 
-        {/* Performance Chart (Bento Item 2) */}
-        <div className="md:col-span-8 bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-sm no-print">
-          <div className="flex items-center justify-between mb-lg">
-            <div>
-              <h4 className="font-headline-md text-primary">Academic Progress</h4>
-              <p className="text-label-md text-on-surface-variant">Recent Assessment Scores</p>
-            </div>
-          </div>
-          
-          {grades?.length === 0 ? (
-            <div className="h-48 flex items-center justify-center text-on-surface-variant bg-surface-container-low rounded-lg">
-              No assessments recorded yet.
-            </div>
-          ) : (
-            <div className="h-48 w-full flex items-end justify-between gap-md relative">
-              <div className="absolute inset-0 flex flex-col justify-between pointer-events-none">
-                <div className="w-full h-[1px] bg-outline-variant/10"></div>
-                <div className="w-full h-[1px] bg-outline-variant/10"></div>
-                <div className="w-full h-[1px] bg-outline-variant/10"></div>
-                <div className="w-full h-[1px] bg-outline-variant/10"></div>
-              </div>
-              
-              {/* Dynamic Bars based on grades */}
-              {grades?.slice(0, 6).reverse().map((g: any) => {
-                const percentage = (g.score / (g.assessments?.max_score || 100)) * 100;
-                return (
-                  <div key={g.id} className="flex-1 flex flex-col items-center gap-xs">
-                    <div 
-                      className="w-full max-w-[40px] bg-primary-fixed-dim hover:bg-primary rounded-t-lg transition-all group relative"
-                      style={{ height: `${percentage}%` }}
-                    >
-                      <div className="hidden group-hover:block absolute -top-8 left-1/2 -translate-x-1/2 bg-on-surface text-surface text-[10px] px-sm py-xs rounded z-10 whitespace-nowrap">
-                        {g.assessments?.title}: {percentage.toFixed(0)}%
-                      </div>
-                    </div>
-                    <span className="text-[10px] text-outline truncate w-full text-center">{g.assessments?.type || 'Exam'}</span>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-
         {/* PDF-Style Report Card Table */}
         <div className="md:col-span-12 bg-white rounded-xl border border-outline-variant overflow-hidden shadow-xl print:shadow-none print:border-none">
           {/* Header */}

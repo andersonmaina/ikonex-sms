@@ -88,13 +88,7 @@ const StudentDirectory = () => {
           </p>
         </div>
         <div className="flex gap-sm items-center">
-          <button
-            onClick={() => queryClient.invalidateQueries()}
-            className="p-3 text-on-surface-variant hover:text-primary transition-colors bg-surface-container-low hover:bg-surface-container border border-outline-variant rounded-lg flex items-center justify-center shadow-sm h-full"
-            title="Refresh Data"
-          >
-            <span className="material-symbols-outlined">refresh</span>
-          </button>
+
           <button 
           onClick={() => {
             setStudentToEdit(undefined);

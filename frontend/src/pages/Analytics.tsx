@@ -167,9 +167,7 @@ const Analytics = () => {
               </div>
             </div>
             
-            <button className="w-full py-sm mt-md font-label-md text-primary border border-outline-variant rounded-lg hover:bg-surface-container transition-colors">
-              View Detailed Action Plan
-            </button>
+
           </div>
         </div>
       </section>
