@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { CreateSubjectModal } from '../components/CreateSubjectModal';
 
@@ -197,8 +198,16 @@ const Subjects = () => {
                     </td>
                     <td className="px-lg py-md text-right">
                       <div className="flex items-center justify-end gap-sm opacity-50 group-hover:opacity-100 transition-opacity">
+                        <Link 
+                          to={`/analytics?subjectId=${subject.id}`}
+                          title="View Performance"
+                          className="p-2 text-on-surface-variant hover:text-primary hover:bg-surface-container rounded transition-all"
+                        >
+                          <span className="material-symbols-outlined">analytics</span>
+                        </Link>
                         <button 
                           onClick={() => handleEdit(subject)}
+                          title="Edit Subject"
                           className="p-2 text-on-surface-variant hover:text-primary hover:bg-surface-container rounded transition-all"
                         >
                           <span className="material-symbols-outlined">edit</span>
