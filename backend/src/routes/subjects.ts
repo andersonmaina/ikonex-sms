@@ -27,12 +27,12 @@ router.get('/', async (req: Request, res: Response): Promise<void> => {
 // POST new subject
 router.post('/', async (req: Request, res: Response): Promise<void> => {
   try {
-    const { name, code, department, credits, stream_ids, exam_type } = req.body;
+    const { name, code, department, stream_ids, exam_type } = req.body;
     
     // 1. Insert Subject
     const { data: newSubject, error: subjectError } = await supabase
       .from('subjects')
-      .insert([{ name, code, department, credits, exam_type: exam_type || 'Both' }])
+      .insert([{ name, code, department, exam_type: exam_type || 'Both' }])
       .select()
       .single();
       
@@ -61,12 +61,12 @@ router.post('/', async (req: Request, res: Response): Promise<void> => {
 // PUT update subject
 router.put('/:id', async (req: Request, res: Response): Promise<void> => {
   try {
-    const { name, code, department, credits, stream_ids, exam_type } = req.body;
+    const { name, code, department, stream_ids, exam_type } = req.body;
     
     // 1. Update Subject
     const { data: updatedSubject, error: subjectError } = await supabase
       .from('subjects')
-      .update({ name, code, department, credits, exam_type })
+      .update({ name, code, department, exam_type })
       .eq('id', req.params.id)
       .select()
       .single();

@@ -145,24 +145,23 @@ const Subjects = () => {
                 <th className="px-lg py-4 font-bold">Subject Code</th>
                 <th className="px-lg py-4 font-bold">Name & Department</th>
                 <th className="px-lg py-4 font-bold">Assigned Streams</th>
-                <th className="px-lg py-4 font-bold">Credits</th>
                 <th className="px-lg py-4 font-bold text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="font-body-md text-body-md divide-y divide-outline-variant/30">
               {isLoading ? (
                 <tr>
-                  <td colSpan={5} className="p-xl text-center">
+                  <td colSpan={4} className="p-xl text-center">
                     <span className="material-symbols-outlined animate-spin text-primary">autorenew</span>
                   </td>
                 </tr>
               ) : isError ? (
                 <tr>
-                  <td colSpan={5} className="p-xl text-center text-error bg-error-container">Failed to load subjects</td>
+                  <td colSpan={4} className="p-xl text-center text-error bg-error-container">Failed to load subjects</td>
                 </tr>
               ) : subjects?.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="p-xl text-center text-on-surface-variant">No subjects added yet.</td>
+                  <td colSpan={4} className="p-xl text-center text-on-surface-variant">No subjects added yet.</td>
                 </tr>
               ) : (
                 subjects?.map((subject) => (
@@ -187,12 +186,6 @@ const Subjects = () => {
                             </span>
                           ))
                         )}
-                      </div>
-                    </td>
-                    <td className="px-lg py-md">
-                      <div className="flex items-center gap-xs">
-                        <span className="material-symbols-outlined text-primary text-sm">stars</span>
-                        <span>{subject.credits}</span>
                       </div>
                     </td>
                     <td className="px-lg py-md text-right">
