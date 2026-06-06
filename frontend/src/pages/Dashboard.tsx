@@ -19,7 +19,7 @@ const Dashboard = () => {
       <section className="flex justify-between items-end">
         <div>
           <h2 className="font-headline-xl text-headline-xl text-primary">Academic Overview</h2>
-          <p className="text-on-surface-variant font-body-lg">Welcome back, Administrator. Here's what's happening today.</p>
+          <p className="text-on-surface-variant font-body-lg">Welcome</p>
         </div>
         <div className="flex gap-sm items-center">
           <button

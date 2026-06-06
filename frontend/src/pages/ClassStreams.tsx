@@ -52,7 +52,7 @@ const ClassStreams = () => {
         <div>
           <h2 className="font-headline-xl text-headline-xl text-primary mb-xs">Class Streams</h2>
           <p className="text-on-surface-variant font-body-lg text-body-lg">
-            Organize and manage academic sections for the current session.
+            Orgai and mange streams.
           </p>
         </div>
         <div className="flex gap-sm items-center">

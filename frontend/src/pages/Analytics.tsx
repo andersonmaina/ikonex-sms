@@ -34,7 +34,7 @@ const Analytics = () => {
       <section className="flex flex-col md:flex-row md:items-end justify-between gap-md">
         <div>
           <h2 className="font-headline-xl text-headline-xl text-primary">Class Performance Analytics</h2>
-          <p className="text-on-surface-variant text-body-lg">Detailed insight into student academic performance across cohorts.</p>
+          <p className="text-on-surface-variant text-body-lg">Detailed insight into student academic performance across streams.</p>
         </div>
         <div className="flex gap-sm items-center">
           <button

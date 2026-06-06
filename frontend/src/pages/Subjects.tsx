@@ -64,7 +64,7 @@ const Subjects = () => {
         <div>
           <h2 className="font-headline-xl text-headline-xl text-primary">Subject & Curriculum</h2>
           <p className="font-body-md text-body-md text-on-surface-variant max-w-2xl mt-sm">
-            Manage academic courses, departmental allocations, and class stream assignments. Maintain high academic standards through structured curriculum tracking.
+            Manage academic courses, and class stream assignments.
           </p>
         </div>
         <div className="flex gap-sm items-center">
@@ -128,14 +128,7 @@ const Subjects = () => {
       <section className="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-sm">
         <div className="px-lg py-md border-b border-outline-variant bg-surface-container-low flex items-center justify-between">
           <h3 className="font-headline-md text-headline-md text-primary">Academic Subject List</h3>
-          <div className="flex gap-sm">
-            <button className="p-2 border border-outline-variant rounded hover:bg-surface-container transition-colors">
-              <span className="material-symbols-outlined text-on-surface-variant">filter_list</span>
-            </button>
-            <button className="p-2 border border-outline-variant rounded hover:bg-surface-container transition-colors">
-              <span className="material-symbols-outlined text-on-surface-variant">download</span>
-            </button>
-          </div>
+
         </div>
         
         <div className="overflow-x-auto">
