@@ -64,7 +64,16 @@ const Analytics = () => {
             </select>
             <span className="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-primary">expand_more</span>
           </div>
-          <button className="flex items-center gap-sm px-md py-sm bg-primary text-on-primary rounded-lg text-body-md font-semibold shadow-md hover:brightness-110 active:scale-95 transition-all">
+          <button 
+            onClick={() => {
+              const url = new URL(`${API_URL}/api/reports/analytics/class-performance/pdf`);
+              const streamId = searchParams.get('streamId');
+              if (streamId) {
+                url.searchParams.set('streamId', streamId);
+              }
+              window.open(url.toString(), '_blank');
+            }}
+            className="flex items-center gap-sm px-md py-sm bg-primary text-on-primary rounded-lg text-body-md font-semibold shadow-md hover:brightness-110 active:scale-95 transition-all">
             <span className="material-symbols-outlined">download</span> Export Report
           </button>
         </div>
