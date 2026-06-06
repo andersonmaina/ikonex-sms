@@ -77,18 +77,12 @@ const Analytics = () => {
           <div className="flex items-baseline gap-sm z-10">
             <span className="text-headline-xl font-bold text-primary">{isLoading ? '...' : `${analytics?.avgScore}%`}</span>
           </div>
-          <div className="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity">
-            <span className="material-symbols-outlined text-[120px]">school</span>
-          </div>
         </div>
 
         <div className="bg-white p-lg rounded-xl border border-outline-variant shadow-[0_4px_12px_rgba(26,54,93,0.08)] flex flex-col justify-between h-32 relative overflow-hidden group">
           <div className="text-on-surface-variant font-label-md uppercase tracking-wider">Passed Assessments</div>
           <div className="flex items-baseline gap-sm z-10">
             <span className="text-headline-xl font-bold text-primary">{isLoading ? '...' : analytics?.passed}</span>
-          </div>
-          <div className="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity">
-            <span className="material-symbols-outlined text-[120px]">verified</span>
           </div>
         </div>
 
@@ -97,18 +91,12 @@ const Analytics = () => {
           <div className="flex items-baseline gap-sm z-10">
             <span className="text-headline-xl font-bold text-error">{isLoading ? '...' : analytics?.failed}</span>
           </div>
-          <div className="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity">
-            <span className="material-symbols-outlined text-[120px]">warning</span>
-          </div>
         </div>
 
         <div className="bg-white p-lg rounded-xl border border-outline-variant shadow-[0_4px_12px_rgba(26,54,93,0.08)] flex flex-col justify-between h-32 relative overflow-hidden group">
           <div className="text-on-surface-variant font-label-md uppercase tracking-wider">Total Assessments</div>
           <div className="flex flex-col z-10">
             <span className="text-headline-xl font-bold text-primary">{isLoading ? '...' : analytics?.totalAssessments}</span>
-          </div>
-          <div className="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity">
-            <span className="material-symbols-outlined text-[120px]">library_books</span>
           </div>
         </div>
       </section>
