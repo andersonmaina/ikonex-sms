@@ -25,13 +25,29 @@ const fetchStudents = async (): Promise<Student[]> => {
   return data.data;
 };
 
+const fetchStreams = async () => {
+  const { data } = await axios.get(`${API_URL}/api/class-streams`);
+  return data.data;
+};
+
 const StudentDirectory = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [filterStreamId, setFilterStreamId] = useState('');
 
   const { data: students, isLoading } = useQuery({
     queryKey: ['students'],
     queryFn: fetchStudents,
   });
+
+  const { data: streams } = useQuery({
+    queryKey: ['classStreams'],
+    queryFn: fetchStreams,
+  });
+
+  const filteredStudents = students?.filter(student => {
+    if (filterStreamId && student.stream_id !== filterStreamId) return false;
+    return true;
+  }) || [];
 
   return (
     <div className="p-xl max-w-[1440px] mx-auto w-full">
@@ -57,8 +73,17 @@ const StudentDirectory = () => {
         <div className="glass-card p-md rounded-xl col-span-3 flex flex-wrap items-center gap-md">
           <span className="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Filters:</span>
           <div className="flex-1 min-w-[150px]">
-            <select className="w-full bg-surface-container-low border border-outline-variant rounded-lg px-md py-2 font-body-md text-body-md focus:border-primary outline-none">
+            <select 
+              value={filterStreamId}
+              onChange={(e) => setFilterStreamId(e.target.value)}
+              className="w-full bg-surface-container-low border border-outline-variant rounded-lg px-md py-2 font-body-md text-body-md focus:border-primary outline-none"
+            >
               <option value="">All Class Streams</option>
+              {streams?.map((stream: any) => (
+                <option key={stream.id} value={stream.id}>
+                  {stream.name} ({stream.code})
+                </option>
+              ))}
             </select>
           </div>
           <div className="flex-1 min-w-[150px]">
@@ -76,7 +101,7 @@ const StudentDirectory = () => {
         <div className="glass-card p-md rounded-xl flex items-center justify-between">
           <div className="flex flex-col">
             <span className="text-on-surface-variant font-label-sm text-label-sm">TOTAL STUDENTS</span>
-            <span className="text-headline-md font-bold text-primary">{students?.length || 0}</span>
+            <span className="text-headline-md font-bold text-primary">{filteredStudents.length}</span>
           </div>
           <div className="p-2 bg-secondary-container text-on-secondary-container rounded-lg">
             <span className="material-symbols-outlined">trending_up</span>
@@ -104,14 +129,12 @@ const StudentDirectory = () => {
                     <span className="material-symbols-outlined animate-spin text-primary">autorenew</span>
                   </td>
                 </tr>
-              ) : students?.length === 0 ? (
+              ) : filteredStudents.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="p-xl text-center text-on-surface-variant">
-                    No students registered yet. Click "Register Student" to begin.
-                  </td>
+                  <td colSpan={5} className="p-xl text-center text-on-surface-variant font-label-md">No students found for this stream.</td>
                 </tr>
               ) : (
-                students?.map((student) => (
+                filteredStudents.map((student) => (
                   <tr key={student.id} className="hover:bg-surface-container-lowest transition-colors group">
                     <td className="px-lg py-md">
                       <div className="flex items-center gap-md">
