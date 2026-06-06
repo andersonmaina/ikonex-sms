@@ -95,10 +95,7 @@ export const CreateAssessmentModal: React.FC<CreateAssessmentModalProps> = ({ is
                 className="w-full px-md py-sm bg-surface-container-low border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all font-body-md"
               >
                 <option value="Exam">Exam</option>
-                <option value="Midterm">Midterm</option>
-                <option value="Quiz">Quiz</option>
-                <option value="Assignment">Assignment</option>
-                <option value="Practical">Practical</option>
+                <option value="CAT">CAT</option>
               </select>
             </div>
             <div>
