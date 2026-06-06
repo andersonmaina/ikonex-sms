@@ -18,7 +18,7 @@ const Dashboard = () => {
       {/* Welcome Section */}
       <section className="flex justify-between items-end">
         <div>
-          <h2 className="font-headline-xl text-headline-xl text-primary">Academic Overview</h2>
+          <h2 className="font-headline-xl text-headline-xl text-primary">Academic overview</h2>
           <p className="text-on-surface-variant font-body-lg">Welcome</p>
         </div>
         <div className="flex gap-sm items-center">

@@ -62,7 +62,7 @@ const Subjects = () => {
       {/* Page Header Section */}
       <section className="flex flex-col md:flex-row md:items-end justify-between gap-md mt-xl">
         <div>
-          <h2 className="font-headline-xl text-headline-xl text-primary">Subject & Curriculum</h2>
+          <h2 className="font-headline-xl text-headline-xl text-primary">Subject & curriculum</h2>
           <p className="font-body-md text-body-md text-on-surface-variant max-w-2xl mt-sm">
             Manage academic courses, and class stream assignments.
           </p>

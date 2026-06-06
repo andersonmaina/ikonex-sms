@@ -82,7 +82,7 @@ const StudentDirectory = () => {
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-md mb-xl">
         <div>
-          <h2 className="font-headline-xl text-headline-xl text-primary mb-xs">Student Directory</h2>
+          <h2 className="font-headline-xl text-headline-xl text-primary mb-xs">Student directory</h2>
           <p className="text-on-surface-variant font-body-lg text-body-lg">
             Manage and monitor academic progress for enrolled students.
           </p>

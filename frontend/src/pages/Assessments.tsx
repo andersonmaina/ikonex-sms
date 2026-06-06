@@ -177,7 +177,7 @@ const Assessments = () => {
     <div className="p-lg flex flex-col gap-lg overflow-y-auto w-full max-w-[1440px] mx-auto">
       <section className="flex flex-col md:flex-row md:items-end justify-between gap-md mt-xl">
         <div>
-          <h2 className="font-headline-xl text-headline-xl text-primary">Assessments & Data Entry</h2>
+          <h2 className="font-headline-xl text-headline-xl text-primary">Assessments & data entry</h2>
           <p className="font-body-md text-body-md text-on-surface-variant max-w-2xl mt-sm">
             Create assessment tasks and securely enter grades for student cohorts. Data automatically recalculates grades upon saving.
           </p>
