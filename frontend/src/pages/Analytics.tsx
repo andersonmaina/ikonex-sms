@@ -153,7 +153,7 @@ const Analytics = () => {
               <div>
                 <p className="font-label-md text-label-md font-bold text-on-surface">Strong Performance</p>
                 <p className="font-body-sm text-body-sm text-on-surface-variant mt-1">
-                  {analytics?.distribution?.A || 0} students achieved an A grade (&gt;70%) across all assessments.
+                  {analytics?.distribution?.A || 0} A grades (&gt;70%) were achieved across all assessments.
                 </p>
               </div>
             </div>
