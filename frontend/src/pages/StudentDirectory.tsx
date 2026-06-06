@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
@@ -28,7 +28,7 @@ const fetchStudents = async (): Promise<Student[]> => {
 const StudentDirectory = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const { data: students, isLoading, isError } = useQuery({
+  const { data: students, isLoading } = useQuery({
     queryKey: ['students'],
     queryFn: fetchStudents,
   });
