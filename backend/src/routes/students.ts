@@ -62,4 +62,37 @@ router.post('/', async (req: Request, res: Response): Promise<void> => {
   }
 });
 
+// PUT update student
+router.put('/:id', async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { first_name, last_name, admission_number, stream_id, dob } = req.body;
+    const { data, error } = await supabase
+      .from('students')
+      .update({ first_name, last_name, admission_number, stream_id, dob })
+      .eq('id', req.params.id)
+      .select()
+      .single();
+      
+    if (error) throw error;
+    res.json({ data });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// DELETE student
+router.delete('/:id', async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { error } = await supabase
+      .from('students')
+      .delete()
+      .eq('id', req.params.id);
+      
+    if (error) throw error;
+    res.status(204).send();
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 export default router;

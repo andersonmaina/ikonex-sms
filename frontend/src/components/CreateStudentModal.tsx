@@ -5,6 +5,7 @@ import axios from 'axios';
 interface CreateStudentModalProps {
   isOpen: boolean;
   onClose: () => void;
+  studentToEdit?: any;
 }
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -14,18 +15,32 @@ const fetchStreams = async () => {
   return data.data;
 };
 
-const createStudent = async (newStudent: any) => {
-  const { data } = await axios.post(`${API_URL}/api/students`, newStudent);
+const saveStudent = async ({ id, ...studentData }: any) => {
+  if (id) {
+    const { data } = await axios.put(`${API_URL}/api/students/${id}`, studentData);
+    return data.data;
+  }
+  const { data } = await axios.post(`${API_URL}/api/students`, studentData);
   return data.data;
 };
 
-export const CreateStudentModal: React.FC<CreateStudentModalProps> = ({ isOpen, onClose }) => {
+export const CreateStudentModal = ({ isOpen, onClose, studentToEdit }: CreateStudentModalProps) => {
   const queryClient = useQueryClient();
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [admissionNum, setAdmissionNum] = useState('');
-  const [streamId, setStreamId] = useState('');
-  const [dob, setDob] = useState('');
+  const [firstName, setFirstName] = React.useState(studentToEdit?.first_name || '');
+  const [lastName, setLastName] = React.useState(studentToEdit?.last_name || '');
+  const [admissionNum, setAdmissionNum] = React.useState(studentToEdit?.admission_number || '');
+  const [streamId, setStreamId] = React.useState(studentToEdit?.stream_id || '');
+  const [dob, setDob] = React.useState(studentToEdit?.dob || '');
+
+  React.useEffect(() => {
+    if (isOpen) {
+      setFirstName(studentToEdit?.first_name || '');
+      setLastName(studentToEdit?.last_name || '');
+      setAdmissionNum(studentToEdit?.admission_number || '');
+      setStreamId(studentToEdit?.stream_id || '');
+      setDob(studentToEdit?.dob || '');
+    }
+  }, [isOpen, studentToEdit]);
 
   const { data: streams, isLoading: isLoadingStreams } = useQuery({
     queryKey: ['classStreams'],
@@ -34,15 +49,9 @@ export const CreateStudentModal: React.FC<CreateStudentModalProps> = ({ isOpen, 
   });
 
   const mutation = useMutation({
-    mutationFn: createStudent,
+    mutationFn: saveStudent,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['students'] });
-      // Reset form
-      setFirstName('');
-      setLastName('');
-      setAdmissionNum('');
-      setStreamId('');
-      setDob('');
       onClose();
     },
     onError: (err: any) => {
@@ -55,6 +64,7 @@ export const CreateStudentModal: React.FC<CreateStudentModalProps> = ({ isOpen, 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     mutation.mutate({
+      id: studentToEdit?.id,
       first_name: firstName,
       last_name: lastName,
       admission_number: admissionNum,
@@ -67,7 +77,9 @@ export const CreateStudentModal: React.FC<CreateStudentModalProps> = ({ isOpen, 
     <div className="fixed inset-0 z-50 flex items-center justify-center p-md bg-on-surface/40 backdrop-blur-sm">
       <div className="bg-surface w-full max-w-lg rounded-2xl shadow-xl overflow-hidden animate-in fade-in zoom-in duration-200">
         <div className="p-lg border-b border-outline-variant flex justify-between items-center bg-surface-container-low">
-          <h2 className="font-headline-md text-headline-md text-primary font-bold">Register Student</h2>
+          <h2 className="font-headline-md text-headline-md text-primary font-bold">
+            {studentToEdit ? 'Edit Student' : 'Register Student'}
+          </h2>
           <button onClick={onClose} className="p-2 text-on-surface-variant hover:text-error transition-colors rounded-full hover:bg-error-container/20">
             <span className="material-symbols-outlined">close</span>
           </button>
@@ -149,7 +161,7 @@ export const CreateStudentModal: React.FC<CreateStudentModalProps> = ({ isOpen, 
               className="px-lg py-2 rounded-lg font-label-md bg-primary text-on-primary hover:bg-primary-container transition-colors shadow-md disabled:opacity-70 flex items-center gap-2"
             >
               {mutation.isPending && <span className="material-symbols-outlined animate-spin text-[18px]">autorenew</span>}
-              Register Student
+              {studentToEdit ? 'Save Changes' : 'Register Student'}
             </button>
           </div>
         </form>

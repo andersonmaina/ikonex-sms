@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { CreateStudentModal } from '../components/CreateStudentModal';
@@ -30,9 +30,15 @@ const fetchStreams = async () => {
   return data.data;
 };
 
+const deleteStudentApi = async (id: string) => {
+  await axios.delete(`${API_URL}/api/students/${id}`);
+};
+
 const StudentDirectory = () => {
+  const queryClient = useQueryClient();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [filterStreamId, setFilterStreamId] = useState('');
+  const [studentToEdit, setStudentToEdit] = useState<Student | undefined>(undefined);
 
   const { data: students, isLoading } = useQuery({
     queryKey: ['students'],
@@ -49,6 +55,27 @@ const StudentDirectory = () => {
     return true;
   }) || [];
 
+  const deleteMutation = useMutation({
+    mutationFn: deleteStudentApi,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['students'] });
+    },
+    onError: (err: any) => {
+      alert(`Error deleting student: ${err.response?.data?.error || err.message}`);
+    }
+  });
+
+  const handleEdit = (student: Student) => {
+    setStudentToEdit(student);
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = (id: string) => {
+    if (window.confirm('Are you sure you want to delete this student? This action cannot be undone.')) {
+      deleteMutation.mutate(id);
+    }
+  };
+
   return (
     <div className="p-xl max-w-[1440px] mx-auto w-full">
       {/* Page Header */}
@@ -60,7 +87,10 @@ const StudentDirectory = () => {
           </p>
         </div>
         <button 
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => {
+            setStudentToEdit(undefined);
+            setIsModalOpen(true);
+          }}
           className="bg-primary text-on-primary px-lg py-3 rounded-lg font-label-md text-label-md flex items-center gap-sm hover:brightness-110 active:scale-[0.98] transition-all shadow-md"
         >
           <span className="material-symbols-outlined">person_add</span>
@@ -161,10 +191,10 @@ const StudentDirectory = () => {
                         <Link to={`/students/${student.id}`} className="p-2 hover:bg-surface-container rounded-lg text-on-surface-variant transition-colors" title="View Profile">
                           <span className="material-symbols-outlined text-[20px]">visibility</span>
                         </Link>
-                        <button className="p-2 hover:bg-surface-container rounded-lg text-primary transition-colors" title="Edit">
+                        <button onClick={() => handleEdit(student)} className="p-2 hover:bg-surface-container rounded-lg text-primary transition-colors" title="Edit">
                           <span className="material-symbols-outlined text-[20px]">edit</span>
                         </button>
-                        <button className="p-2 hover:bg-error-container/20 rounded-lg text-error transition-colors" title="Delete">
+                        <button onClick={() => handleDelete(student.id)} className="p-2 hover:bg-error-container/20 rounded-lg text-error transition-colors" title="Delete">
                           <span className="material-symbols-outlined text-[20px]">delete</span>
                         </button>
                       </div>
@@ -179,7 +209,11 @@ const StudentDirectory = () => {
 
       <CreateStudentModal 
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => {
+          setIsModalOpen(false);
+          setStudentToEdit(undefined);
+        }}
+        studentToEdit={studentToEdit}
       />
     </div>
   );
