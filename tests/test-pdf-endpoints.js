@@ -100,7 +100,7 @@ async function runTests() {
 
     console.log('\nAll PDF generation tests passed successfully.');
 
-  } catch (error: any) {
+  } catch (error) {
     console.error('\nTest run failed:', error.message || error);
     process.exit(1);
   }
