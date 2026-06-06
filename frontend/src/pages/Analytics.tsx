@@ -138,7 +138,7 @@ const Analytics = () => {
               <div>
                 <p className="font-label-md text-label-md font-bold text-on-surface">Intervention Required</p>
                 <p className="font-body-sm text-body-sm text-on-surface-variant mt-1">
-                  {analytics?.failed || 0} grades fall below the 50% passing threshold. Remedial sessions are highly recommended.
+                  {analytics?.failed || 0} grades fall below the 40% passing threshold. Remedial sessions are highly recommended.
                 </p>
               </div>
             </div>
@@ -148,7 +148,7 @@ const Analytics = () => {
               <div>
                 <p className="font-label-md text-label-md font-bold text-on-surface">Strong Performance</p>
                 <p className="font-body-sm text-body-sm text-on-surface-variant mt-1">
-                  {analytics?.distribution?.A || 0} students achieved an A grade (&gt;80%) across all assessments.
+                  {analytics?.distribution?.A || 0} students achieved an A grade (&gt;70%) across all assessments.
                 </p>
               </div>
             </div>
