@@ -10,10 +10,12 @@ interface Assessment {
   max_score: number;
   date: string;
   stream_id: string;
+  subject_id: string;
   class_streams?: {
     name: string;
     code: string;
   };
+  subjects?: any;
 }
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -29,10 +31,16 @@ const GradeEntryForm = ({ assessment, onBack }: { assessment: Assessment, onBack
   const [scores, setScores] = useState<Record<string, string>>({});
 
   const { data: students, isLoading: isLoadingStudents } = useQuery({
-    queryKey: ['students', assessment.stream_id],
+    queryKey: ['students', assessment.stream_id, assessment.subject_id],
     queryFn: async () => {
       const { data } = await axios.get(`${API_URL}/api/students`);
-      if (!assessment.stream_id) return data.data;
+      if (!assessment.stream_id) {
+        if (assessment.subjects?.subject_assignments) {
+          const assignedStreamIds = assessment.subjects.subject_assignments.map((a: any) => a.stream_id);
+          return data.data.filter((s: any) => assignedStreamIds.includes(s.stream_id));
+        }
+        return data.data;
+      }
       return data.data.filter((s: any) => s.stream_id === assessment.stream_id);
     }
   });

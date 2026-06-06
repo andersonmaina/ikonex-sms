@@ -44,13 +44,17 @@ export const CreateAssessmentModal: React.FC<CreateAssessmentModalProps> = ({ is
     enabled: isOpen,
   });
 
-  const filteredSubjects = streamId 
-    ? subjects?.filter((subj: any) => subj.subject_assignments.some((a: any) => a.class_streams.id === streamId))
-    : subjects;
+  const filteredStreams = subjectId 
+    ? streams?.filter((stream: any) => {
+        const subj = subjects?.find((s: any) => s.id === subjectId);
+        return subj?.subject_assignments?.some((a: any) => a.class_streams.id === stream.id);
+      })
+    : streams;
 
   const handleSubjectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const sId = e.target.value;
     setSubjectId(sId);
+    setStreamId(''); // reset stream when subject changes
     if (sId) {
       const subj = subjects?.find((s: any) => s.id === sId);
       if (subj && subj.exam_type && subj.exam_type !== 'Both') {
@@ -139,20 +143,6 @@ export const CreateAssessmentModal: React.FC<CreateAssessmentModalProps> = ({ is
           </div>
 
           <div>
-            <label className="block text-label-md font-bold text-on-surface-variant mb-1">Target Class Stream</label>
-            <select
-              value={streamId}
-              onChange={(e) => setStreamId(e.target.value)}
-              className="w-full px-md py-sm bg-surface-container-low border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all font-body-md"
-            >
-              <option value="">All Streams</option>
-              {streams?.map((s: any) => (
-                <option key={s.id} value={s.id}>{s.name} ({s.code})</option>
-              ))}
-            </select>
-          </div>
-
-          <div>
             <label className="block text-label-md font-bold text-on-surface-variant mb-1">Subject</label>
             <select
               required
@@ -161,7 +151,22 @@ export const CreateAssessmentModal: React.FC<CreateAssessmentModalProps> = ({ is
               className="w-full px-md py-sm bg-surface-container-low border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all font-body-md"
             >
               <option value="">Select a Subject</option>
-              {filteredSubjects?.map((s: any) => (
+              {subjects?.map((s: any) => (
+                <option key={s.id} value={s.id}>{s.name} ({s.code})</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-label-md font-bold text-on-surface-variant mb-1">Target Class Stream</label>
+            <select
+              value={streamId}
+              onChange={(e) => setStreamId(e.target.value)}
+              className="w-full px-md py-sm bg-surface-container-low border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all font-body-md"
+              disabled={!subjectId}
+            >
+              <option value="">{subjectId ? 'All Assigned Streams' : 'Select a Subject first'}</option>
+              {filteredStreams?.map((s: any) => (
                 <option key={s.id} value={s.id}>{s.name} ({s.code})</option>
               ))}
             </select>

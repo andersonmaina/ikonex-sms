@@ -44,7 +44,7 @@ router.get('/assessments', async (req: Request, res: Response): Promise<void> =>
   try {
     const { data, error } = await supabase
       .from('assessments')
-      .select('*, class_streams(name, code), subjects(name)')
+      .select('*, class_streams(name, code), subjects(id, name, subject_assignments(stream_id))')
       .order('date', { ascending: false });
     
     if (error) throw error;
