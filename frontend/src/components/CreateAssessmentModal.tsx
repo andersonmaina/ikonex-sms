@@ -114,12 +114,11 @@ export const CreateAssessmentModal: React.FC<CreateAssessmentModalProps> = ({ is
           <div>
             <label className="block text-label-md font-bold text-on-surface-variant mb-1">Target Class Stream</label>
             <select
-              required
               value={streamId}
               onChange={(e) => setStreamId(e.target.value)}
               className="w-full px-md py-sm bg-surface-container-low border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all font-body-md"
             >
-              <option value="">Select a Stream</option>
+              <option value="">All Streams</option>
               {streams?.map((s: any) => (
                 <option key={s.id} value={s.id}>{s.name} ({s.code})</option>
               ))}

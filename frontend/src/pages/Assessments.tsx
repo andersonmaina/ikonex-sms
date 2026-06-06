@@ -204,7 +204,7 @@ const Assessments = () => {
                 <h3 className="font-headline-md text-primary mb-xs">{a.title}</h3>
                 <p className="text-on-surface-variant text-sm flex items-center gap-xs">
                   <span className="material-symbols-outlined text-[16px]">groups</span>
-                  {a.class_streams?.name || 'Unassigned'}
+                  {a.class_streams?.name || 'All Streams'}
                 </p>
                 <div className="mt-auto pt-md border-t border-outline-variant flex justify-between items-center group-hover:text-primary transition-colors">
                   <span className="text-sm font-bold text-outline">Max Score: {a.max_score}</span>
