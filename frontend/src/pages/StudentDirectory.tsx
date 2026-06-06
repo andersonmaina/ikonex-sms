@@ -120,12 +120,7 @@ const StudentDirectory = () => {
               ))}
             </select>
           </div>
-          <div className="flex-1 min-w-[150px]">
-            <select className="w-full bg-surface-container-low border border-outline-variant rounded-lg px-md py-2 font-body-md text-body-md focus:border-primary outline-none">
-              <option value="">Status: All</option>
-              <option value="active">Active</option>
-            </select>
-          </div>
+
         </div>
 
         <div className="glass-card p-md rounded-xl flex items-center justify-between">
