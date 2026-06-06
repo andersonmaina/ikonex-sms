@@ -65,12 +65,14 @@ const GradeEntryForm = ({ assessment, onBack }: { assessment: Assessment, onBack
   }, [existingGrades]);
 
   const mutation = useMutation({
-    mutationFn: async (payload: { student_id: string, score: number }) => {
-      await axios.post(`${API_URL}/api/grades/scores`, {
-        student_id: payload.student_id,
-        assessment_id: assessment.id,
-        score: payload.score
-      });
+    mutationFn: async (payloads: { student_id: string, score: number }[]) => {
+      await Promise.all(payloads.map(payload => 
+        axios.post(`${API_URL}/api/grades/scores`, {
+          student_id: payload.student_id,
+          assessment_id: assessment.id,
+          score: payload.score
+        })
+      ));
     },
     onSuccess: () => {
        alert("Grades saved successfully!");
@@ -82,12 +84,19 @@ const GradeEntryForm = ({ assessment, onBack }: { assessment: Assessment, onBack
   });
 
   const handleSave = () => {
+    const payloads: { student_id: string, score: number }[] = [];
     Object.entries(scores).forEach(([studentId, scoreStr]) => {
       const score = parseFloat(scoreStr);
       if (!isNaN(score)) {
-        mutation.mutate({ student_id: studentId, score });
+        payloads.push({ student_id: studentId, score });
       }
     });
+    
+    if (payloads.length > 0) {
+      mutation.mutate(payloads);
+    } else {
+      alert("No valid scores to save.");
+    }
   };
 
   return (
