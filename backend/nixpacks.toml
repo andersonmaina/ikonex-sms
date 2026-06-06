@@ -1,6 +1,8 @@
+providers = ["node"]
+
 [phases.setup]
-nixPkgs = ["...", "chromium"]
+aptPkgs = ["...", "chromium", "chromium-sandbox"]
 
 [variables]
 PUPPETEER_SKIP_DOWNLOAD = "true"
-PUPPETEER_EXECUTABLE_PATH = "chromium"
+PUPPETEER_EXECUTABLE_PATH = "/usr/bin/chromium"
