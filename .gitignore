@@ -8,5 +8,5 @@ backend/dist/
 .env.local
 frontend/.env.local
 backend/.env
-tests/
+tests/test-outputs/
 designs/
