@@ -12,6 +12,7 @@ const fetchStudentProfile = async (id: string) => {
 
 const StudentProfile = () => {
   const { id } = useParams<{ id: string }>();
+  const [isDownloading, setIsDownloading] = React.useState(false);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['studentProfile', id],
@@ -64,8 +65,10 @@ const StudentProfile = () => {
         </div>
         <div className="flex gap-md">
           <button 
+            disabled={isDownloading}
             onClick={async () => {
               try {
+                setIsDownloading(true);
                 const response = await axios.get(`${API_URL}/api/reports/student/${id}/pdf`, {
                   responseType: 'blob'
                 });
@@ -78,12 +81,18 @@ const StudentProfile = () => {
                 link.remove();
               } catch (err) {
                 alert('Failed to download PDF');
+              } finally {
+                setIsDownloading(false);
               }
             }}
-            className="flex items-center gap-sm bg-primary text-on-primary px-lg py-md rounded-lg font-label-md hover:bg-primary-container transition-colors shadow-md active:scale-95"
+            className={`flex items-center gap-sm bg-primary text-on-primary px-lg py-md rounded-lg font-label-md transition-all shadow-md ${isDownloading ? 'opacity-70 cursor-wait' : 'hover:bg-primary-container active:scale-95'}`}
           >
-            <span className="material-symbols-outlined text-[20px]">download</span>
-            Download PDF Report
+            {isDownloading ? (
+              <span className="material-symbols-outlined text-[20px] animate-spin">autorenew</span>
+            ) : (
+              <span className="material-symbols-outlined text-[20px]">download</span>
+            )}
+            {isDownloading ? 'Generating...' : 'Download PDF Report'}
           </button>
         </div>
       </div>

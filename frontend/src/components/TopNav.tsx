@@ -17,26 +17,9 @@ const TopNav = () => {
           </div>
         </div>
         <div className="flex items-center gap-lg">
-          <div className="flex items-center gap-sm">
-            <button className="p-2 rounded-full hover:bg-surface-container-low transition-colors relative">
-              <span className="material-symbols-outlined text-on-surface-variant">notifications</span>
-              <span className="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border-2 border-surface"></span>
-            </button>
-            <button className="p-2 rounded-full hover:bg-surface-container-low transition-colors">
-              <span className="material-symbols-outlined text-on-surface-variant">settings</span>
-            </button>
-          </div>
-          <div className="h-8 w-[1px] bg-outline-variant"></div>
-          <div className="flex items-center gap-md cursor-pointer hover:bg-surface-container-low px-sm py-1 rounded-full transition-colors">
-            <div className="text-right hidden sm:block">
-              <p className="font-label-md text-label-md font-bold text-primary">Admin Profile</p>
-              <p className="text-[10px] leading-tight text-on-surface-variant">Principal Office</p>
-            </div>
-            <img
-              alt="Administrator profile photo"
-              className="w-10 h-10 rounded-full object-cover border-2 border-primary-fixed"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxPa-tpnaAofIF5LienDa6KCT2jZmK780pXHb4-VYiLjJav-AYOb-IxQ783tHaMdVfmoclMMwEn_DFpEuy8qngzHi212O6bNxSAlKHCTxjLL3CYBZvzbOCbLDmQOB78u3_C1XLCTiSlgTE3J22mgM9xLGu4-XJdg3ZWfwf9gGfdl0yOKbZkj3rGPfjzJnVRLnn8e9Slfv1CdFmOqwAIV0GKDkwX-uZJsHbPmyKFIdv8Bxnai1fUBHQBM_1zuStkp2VrWLOcGu2oVMj"
-            />
+          <div className="flex items-center gap-sm cursor-pointer hover:bg-surface-container-low px-sm py-1 rounded-full transition-colors">
+            <span className="font-label-md text-label-md font-bold text-primary">Admin</span>
+            <span className="material-symbols-outlined text-[32px] text-primary">account_circle</span>
           </div>
         </div>
       </div>

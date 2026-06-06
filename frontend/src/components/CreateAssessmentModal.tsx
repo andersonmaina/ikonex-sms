@@ -10,6 +10,9 @@ interface CreateAssessmentModalProps {
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 const createAssessment = async (newAssessment: any) => {
+  if (newAssessment.stream_id === '') {
+    newAssessment.stream_id = null;
+  }
   const { data } = await axios.post(`${API_URL}/api/grades/assessments`, newAssessment);
   return data.data;
 };
