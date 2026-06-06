@@ -73,6 +73,7 @@ router.get('/student/:id/pdf', async (req: Request, res: Response): Promise<void
     // 5. Generate PDF with Puppeteer
     const browser = await puppeteer.launch({
       headless: true,
+      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
       args: [
         '--no-sandbox', 
         '--disable-setuid-sandbox',
@@ -169,6 +170,7 @@ router.get('/analytics/class-performance/pdf', async (req: Request, res: Respons
 
     const browser = await puppeteer.launch({
       headless: true,
+      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
       args: [
         '--no-sandbox', 
         '--disable-setuid-sandbox',
