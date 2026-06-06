@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 const Analytics = () => {
+  const queryClient = useQueryClient();
   const [streamId, setStreamId] = useState<string>('');
 
   const { data: streams } = useQuery({
@@ -33,7 +34,14 @@ const Analytics = () => {
           <h2 className="font-headline-xl text-headline-xl text-primary">Class Performance Analytics</h2>
           <p className="text-on-surface-variant text-body-lg">Detailed insight into student academic performance across cohorts.</p>
         </div>
-        <div className="flex gap-sm">
+        <div className="flex gap-sm items-center">
+          <button
+            onClick={() => queryClient.invalidateQueries()}
+            className="p-3 text-on-surface-variant hover:text-primary transition-colors bg-surface-container-low hover:bg-surface-container border border-outline-variant rounded-lg flex items-center justify-center shadow-sm h-full"
+            title="Refresh Data"
+          >
+            <span className="material-symbols-outlined">refresh</span>
+          </button>
           <div className="relative">
             <select 
               value={streamId}

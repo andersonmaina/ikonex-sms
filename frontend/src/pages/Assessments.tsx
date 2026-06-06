@@ -164,6 +164,7 @@ const GradeEntryForm = ({ assessment, onBack }: { assessment: Assessment, onBack
 };
 
 const Assessments = () => {
+  const queryClient = useQueryClient();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedAssessment, setSelectedAssessment] = useState<Assessment | null>(null);
 
@@ -182,13 +183,22 @@ const Assessments = () => {
           </p>
         </div>
         {!selectedAssessment && (
-          <button 
-            onClick={() => setIsModalOpen(true)}
-            className="bg-primary text-on-primary px-lg py-3 rounded-lg flex items-center gap-sm font-label-md text-label-md font-bold shadow-md hover:brightness-110 active:scale-95 transition-all"
-          >
-            <span className="material-symbols-outlined">add</span>
-            NEW ASSESSMENT
-          </button>
+          <div className="flex gap-sm items-center">
+            <button
+              onClick={() => queryClient.invalidateQueries()}
+              className="p-3 text-on-surface-variant hover:text-primary transition-colors bg-surface-container-low hover:bg-surface-container border border-outline-variant rounded-lg flex items-center justify-center shadow-sm h-full"
+              title="Refresh Data"
+            >
+              <span className="material-symbols-outlined">refresh</span>
+            </button>
+            <button 
+              onClick={() => setIsModalOpen(true)}
+              className="bg-primary text-on-primary px-lg py-3 rounded-lg flex items-center gap-sm font-label-md text-label-md font-bold shadow-md hover:brightness-110 active:scale-95 transition-all"
+            >
+              <span className="material-symbols-outlined">add</span>
+              NEW ASSESSMENT
+            </button>
+          </div>
         )}
       </section>
 

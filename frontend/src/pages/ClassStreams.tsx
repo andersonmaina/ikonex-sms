@@ -54,13 +54,22 @@ const ClassStreams = () => {
             Organize and manage academic sections for the current session.
           </p>
         </div>
-        <button 
-          onClick={() => setIsModalOpen(true)}
-          className="bg-primary text-on-primary px-lg py-md rounded-lg flex items-center gap-sm font-label-md text-label-md hover:bg-primary-container transition-colors shadow-md active:scale-95"
-        >
-          <span className="material-symbols-outlined" data-icon="add_circle">add_circle</span>
-          Create New Stream
-        </button>
+        <div className="flex gap-sm items-center">
+          <button
+            onClick={() => queryClient.invalidateQueries()}
+            className="p-3 text-on-surface-variant hover:text-primary transition-colors bg-surface-container-low hover:bg-surface-container border border-outline-variant rounded-lg flex items-center justify-center shadow-sm h-full"
+            title="Refresh Data"
+          >
+            <span className="material-symbols-outlined">refresh</span>
+          </button>
+          <button 
+            onClick={() => setIsModalOpen(true)}
+            className="bg-primary text-on-primary px-lg py-md rounded-lg flex items-center gap-sm font-label-md text-label-md hover:bg-primary-container transition-colors shadow-md active:scale-95"
+          >
+            <span className="material-symbols-outlined">add</span>
+            Create Stream
+          </button>
+        </div>
       </div>
 
       {/* Stats Overview */}

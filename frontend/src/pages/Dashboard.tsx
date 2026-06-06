@@ -1,9 +1,10 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 const Dashboard = () => {
+  const queryClient = useQueryClient();
   const { data: stats, isLoading } = useQuery({
     queryKey: ['overviewStats'],
     queryFn: async () => {
@@ -20,10 +21,19 @@ const Dashboard = () => {
           <h2 className="font-headline-xl text-headline-xl text-primary">Academic Overview</h2>
           <p className="text-on-surface-variant font-body-lg">Welcome back, Administrator. Here's what's happening today.</p>
         </div>
-        <button className="bg-primary text-on-primary px-lg py-sm rounded-lg font-label-md flex items-center gap-sm hover:opacity-90 transition-opacity active:scale-[0.98]">
-          <span className="material-symbols-outlined">add</span>
-          Generate Report
-        </button>
+        <div className="flex gap-sm items-center">
+          <button
+            onClick={() => queryClient.invalidateQueries()}
+            className="p-3 text-on-surface-variant hover:text-primary transition-colors bg-surface-container-low hover:bg-surface-container border border-outline-variant rounded-lg flex items-center justify-center shadow-sm h-full"
+            title="Refresh Data"
+          >
+            <span className="material-symbols-outlined">refresh</span>
+          </button>
+          <button className="bg-primary text-on-primary px-lg py-3 rounded-lg font-label-md flex items-center gap-sm hover:opacity-90 transition-opacity active:scale-[0.98]">
+            <span className="material-symbols-outlined">add</span>
+            Generate Report
+          </button>
+        </div>
       </section>
 
       {/* Metrics Bento Grid */}
