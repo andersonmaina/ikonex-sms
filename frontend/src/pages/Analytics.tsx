@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 const Analytics = () => {
   const queryClient = useQueryClient();
-  const [streamId, setStreamId] = useState<string>('');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const streamId = searchParams.get('streamId') || '';
 
   const { data: streams } = useQuery({
     queryKey: ['classStreams'],
@@ -45,7 +47,14 @@ const Analytics = () => {
           <div className="relative">
             <select 
               value={streamId}
-              onChange={(e) => setStreamId(e.target.value)}
+              onChange={(e) => {
+                const newStreamId = e.target.value;
+                if (newStreamId) {
+                  setSearchParams({ streamId: newStreamId });
+                } else {
+                  setSearchParams({});
+                }
+              }}
               className="appearance-none flex items-center gap-sm px-md py-sm bg-surface border border-outline-variant rounded-lg text-body-md font-semibold text-primary shadow-sm hover:bg-surface-container-low transition-colors pr-10"
             >
               <option value="">All Streams</option>
