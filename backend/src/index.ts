@@ -14,7 +14,25 @@ import subjectsRouter from './routes/subjects';
 import analyticsRouter from './routes/analytics';
 import reportsRouter from './routes/reports';
 
-app.use(cors());
+const allowedOrigins = [
+  'https://smsikonex.vercel.app',
+  'http://localhost:5173',
+  'http://localhost:3000',
+];
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow requests with no origin (e.g. curl, Postman)
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error(`CORS policy: origin '${origin}' not allowed`));
+      }
+    },
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 app.use('/api/class-streams', classStreamsRouter);
