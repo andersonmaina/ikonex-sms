@@ -7,7 +7,7 @@ interface CreateSubjectModalProps {
   onClose: () => void;
 }
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+const API_URL = import.meta.env.VITE_API_URL;
 
 const fetchStreams = async () => {
   const { data } = await axios.get(`${API_URL}/api/class-streams`);
