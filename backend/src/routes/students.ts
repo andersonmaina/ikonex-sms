@@ -48,10 +48,10 @@ router.get('/:id', async (req: Request, res: Response): Promise<void> => {
 // POST new student
 router.post('/', async (req: Request, res: Response): Promise<void> => {
   try {
-    const { first_name, last_name, admission_number, stream_id, dob } = req.body;
+    const { first_name, last_name, admission_number, stream_id, dob, status } = req.body;
     const { data, error } = await supabase
       .from('students')
-      .insert([{ first_name, last_name, admission_number, stream_id, dob }])
+      .insert([{ first_name, last_name, admission_number, stream_id, dob, status: status || 'ACTIVE' }])
       .select()
       .single();
       
