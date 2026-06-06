@@ -123,10 +123,6 @@ const StudentDirectory = () => {
               <option value="active">Active</option>
             </select>
           </div>
-          <button className="flex items-center gap-xs text-primary font-label-md text-label-md px-md py-2 hover:bg-primary-container/10 rounded-lg transition-colors">
-            <span className="material-symbols-outlined text-[20px]">filter_list</span>
-            Advanced Filters
-          </button>
         </div>
 
         <div className="glass-card p-md rounded-xl flex items-center justify-between">
