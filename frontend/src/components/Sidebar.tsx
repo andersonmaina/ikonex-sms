@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router-dom';
 
 const navItems = [
-  { name: 'Dashboard', icon: 'dashboard', path: '/' },
+  { name: 'Dashboard', icon: 'dashboard', path: '/dashboard' },
   { name: 'Class Streams', icon: 'account_tree', path: '/class-streams' },
   { name: 'Students', icon: 'groups', path: '/students' },
   { name: 'Subjects', icon: 'book', path: '/subjects' },
@@ -50,13 +50,13 @@ const Sidebar = () => {
         ))}
       </nav>
       <div className="mt-auto pt-lg border-t border-outline-variant flex flex-col gap-xs">
-        <a
-          href="#"
+        <NavLink
+          to="/"
           className="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all"
         >
           <span className="material-symbols-outlined">logout</span>
           <span className="font-label-md text-label-md">Logout</span>
-        </a>
+        </NavLink>
       </div>
     </aside>
   );

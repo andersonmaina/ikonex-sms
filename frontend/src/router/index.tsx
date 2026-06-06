@@ -8,43 +8,47 @@ import Subjects from '../pages/Subjects';
 import Assessments from '../pages/Assessments';
 import Analytics from '../pages/Analytics';
 import NotFound from '../pages/NotFound';
+import Login from '../pages/Login';
 import Layout from '../components/Layout';
 
 export const router = createBrowserRouter([
   {
     path: '/',
+    element: <Login />,
+  },
+  {
     element: <Layout />,
     children: [
       {
-        index: true,
+        path: '/dashboard',
         element: <Dashboard />,
       },
       {
-        path: 'class-streams',
+        path: '/class-streams',
         element: <ClassStreams />,
       },
       {
-        path: 'class-streams/:id',
+        path: '/class-streams/:id',
         element: <StreamDetails />,
       },
       {
-        path: 'students',
+        path: '/students',
         element: <StudentDirectory />,
       },
       {
-        path: 'students/:id',
+        path: '/students/:id',
         element: <StudentProfile />,
       },
       {
-        path: 'subjects',
+        path: '/subjects',
         element: <Subjects />,
       },
       {
-        path: 'assessments',
+        path: '/assessments',
         element: <Assessments />,
       },
       {
-        path: 'analytics',
+        path: '/analytics',
         element: <Analytics />,
       },
     ],
