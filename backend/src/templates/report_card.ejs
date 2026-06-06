@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Student Report Card</title>
+  <style>
+    body {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #1A365D; /* Ikonex primary color */
+    }
+    .header {
+      text-align: center;
+      padding: 20px 0;
+      border-bottom: 2px solid #E2E8F0;
+      margin-bottom: 30px;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 28px;
+      color: #1A365D;
+    }
+    .header p {
+      margin: 5px 0 0;
+      font-size: 14px;
+      color: #4A5568;
+    }
+    .student-info {
+      display: flex;
+      justify-content: space-between;
+      background: #F7FAFC;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 30px;
+    }
+    .info-column {
+      display: flex;
+      flex-direction: column;
+    }
+    .info-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      color: #718096;
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+    .info-value {
+      font-size: 16px;
+      font-weight: bold;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 30px;
+    }
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #E2E8F0;
+    }
+    th {
+      background-color: #F7FAFC;
+      color: #4A5568;
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+    .grade-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    .grade-A { background-color: #C6F6D5; color: #22543D; }
+    .grade-B { background-color: #BEE3F8; color: #2A4365; }
+    .grade-C { background-color: #FEFCBF; color: #744210; }
+    .grade-D { background-color: #FEEBC8; color: #7B341E; }
+    .grade-F { background-color: #FED7D7; color: #742A2A; }
+    
+    .summary-section {
+      background: #1A365D;
+      color: white;
+      padding: 20px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-around;
+      text-align: center;
+    }
+    .summary-item h3 {
+      margin: 0;
+      font-size: 14px;
+      font-weight: normal;
+      opacity: 0.8;
+    }
+    .summary-item p {
+      margin: 5px 0 0;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .footer {
+      margin-top: 50px;
+      text-align: center;
+      font-size: 12px;
+      color: #A0AEC0;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>Ikonex Academy</h1>
+    <p>Official Academic Transcript & Report Card</p>
+  </div>
+
+  <div class="student-info">
+    <div class="info-column">
+      <span class="info-label">Student Name</span>
+      <span class="info-value"><%= student.name %></span>
+    </div>
+    <div class="info-column">
+      <span class="info-label">Student ID</span>
+      <span class="info-value"><%= student.id %></span>
+    </div>
+    <div class="info-column">
+      <span class="info-label">Class Stream</span>
+      <span class="info-value"><%= student.stream %></span>
+    </div>
+    <div class="info-column">
+      <span class="info-label">Enrollment Date</span>
+      <span class="info-value"><%= student.enrollmentDate %></span>
+    </div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Subject</th>
+        <th>Assessment</th>
+        <th>Type</th>
+        <th>Score</th>
+        <th>Percentage</th>
+        <th>Grade</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (grades.length === 0) { %>
+        <tr>
+          <td colspan="6" style="text-align: center; color: #718096; padding: 20px;">No grades recorded yet.</td>
+        </tr>
+      <% } else { %>
+        <% grades.forEach(function(grade) { %>
+          <tr>
+            <td><%= grade.subject %></td>
+            <td><%= grade.assessment %></td>
+            <td><%= grade.type.charAt(0).toUpperCase() + grade.type.slice(1) %></td>
+            <td><%= grade.score %> / <%= grade.max %></td>
+            <td><%= grade.percentage %>%</td>
+            <td>
+              <span class="grade-badge grade-<%= grade.grade %>"><%= grade.grade %></span>
+            </td>
+          </tr>
+        <% }); %>
+      <% } %>
+    </tbody>
+  </table>
+
+  <div class="summary-section">
+    <div class="summary-item">
+      <h3>Overall Average</h3>
+      <p><%= summary.average %>%</p>
+    </div>
+    <div class="summary-item">
+      <h3>Cumulative GPA</h3>
+      <p><%= summary.gpa %></p>
+    </div>
+    <div class="summary-item">
+      <h3>Final Grade</h3>
+      <p><%= summary.grade %></p>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>This is a system-generated document. Generated on <%= dateGenerated %>.</p>
+  </div>
+
+</body>
+</html>

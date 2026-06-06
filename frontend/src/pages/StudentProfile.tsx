@@ -64,7 +64,22 @@ const StudentProfile = () => {
         </div>
         <div className="flex gap-md">
           <button 
-            onClick={() => window.print()}
+            onClick={async () => {
+              try {
+                const response = await axios.get(`${API_URL}/api/reports/student/${id}/pdf`, {
+                  responseType: 'blob'
+                });
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', `${student.first_name}_${student.last_name}_ReportCard.pdf`);
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+              } catch (err) {
+                alert('Failed to download PDF');
+              }
+            }}
             className="flex items-center gap-sm bg-primary text-on-primary px-lg py-md rounded-lg font-label-md hover:bg-primary-container transition-colors shadow-md active:scale-95"
           >
             <span className="material-symbols-outlined text-[20px]">download</span>

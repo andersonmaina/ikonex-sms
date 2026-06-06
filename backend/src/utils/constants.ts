@@ -1,14 +1,14 @@
 export const GRADING_SYSTEM = {
   // The minimum percentage required to pass an assessment
-  PASS_THRESHOLD: 50,
+  PASS_THRESHOLD: 40,
 
   // Letter grades and their minimum percentage thresholds
   // Note: These must remain sorted from highest to lowest!
   GRADES: [
-    { label: 'A', minPct: 80, gpaValue: 4.0 },
-    { label: 'B', minPct: 70, gpaValue: 3.0 },
-    { label: 'C', minPct: 60, gpaValue: 2.0 },
-    { label: 'D', minPct: 50, gpaValue: 1.0 },
+    { label: 'A', minPct: 70, gpaValue: 4.0 },
+    { label: 'B', minPct: 60, gpaValue: 3.0 },
+    { label: 'C', minPct: 50, gpaValue: 2.0 },
+    { label: 'D', minPct: 40, gpaValue: 1.0 },
     { label: 'F', minPct: 0,  gpaValue: 0.0 }
   ]
 };
