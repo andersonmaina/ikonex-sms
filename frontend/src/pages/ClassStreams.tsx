@@ -98,7 +98,9 @@ const ClassStreams = () => {
           {streams?.map((stream) => (
             <GlassCard key={stream.id} className="hover:shadow-md transition-shadow group cursor-pointer relative overflow-hidden">
               <div className="absolute top-0 right-0 p-sm opacity-0 group-hover:opacity-100 transition-opacity">
-                 <button className="p-2 text-on-surface-variant hover:text-primary"><span className="material-symbols-outlined text-[20px]">edit</span></button>
+                 <Link to={`/class-streams/${stream.id}`} className="p-2 text-on-surface-variant hover:text-primary block">
+                   <span className="material-symbols-outlined text-[20px]">visibility</span>
+                 </Link>
               </div>
               <div className="flex items-start gap-md mb-md">
                 <div className="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center text-primary font-bold text-headline-md">

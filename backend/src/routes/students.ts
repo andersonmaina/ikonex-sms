@@ -7,7 +7,7 @@ const router = Router();
 router.get('/', async (req: Request, res: Response): Promise<void> => {
   try {
     // Join with class_streams to get the stream name
-    const { data, error } = await supabase
+    let query = supabase
       .from('students')
       .select(`
         *,
@@ -18,6 +18,12 @@ router.get('/', async (req: Request, res: Response): Promise<void> => {
         )
       `)
       .order('created_at', { ascending: false });
+
+    if (req.query.streamId) {
+      query = query.eq('stream_id', req.query.streamId);
+    }
+    
+    const { data, error } = await query;
     
     if (error) throw error;
     res.json({ data });

@@ -1,6 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom';
 import Dashboard from '../pages/Dashboard';
 import ClassStreams from '../pages/ClassStreams';
+import StreamDetails from '../pages/StreamDetails';
 import StudentDirectory from '../pages/StudentDirectory';
 import StudentProfile from '../pages/StudentProfile';
 import Subjects from '../pages/Subjects';
@@ -21,6 +22,10 @@ export const router = createBrowserRouter([
       {
         path: 'class-streams',
         element: <ClassStreams />,
+      },
+      {
+        path: 'class-streams/:id',
+        element: <StreamDetails />,
       },
       {
         path: 'students',
