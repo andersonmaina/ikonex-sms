@@ -65,10 +65,10 @@ router.post('/', async (req: Request, res: Response): Promise<void> => {
 // PUT update student
 router.put('/:id', async (req: Request, res: Response): Promise<void> => {
   try {
-    const { first_name, last_name, admission_number, stream_id, dob } = req.body;
+    const { first_name, last_name, admission_number, stream_id, dob, status } = req.body;
     const { data, error } = await supabase
       .from('students')
-      .update({ first_name, last_name, admission_number, stream_id, dob })
+      .update({ first_name, last_name, admission_number, stream_id, dob, status })
       .eq('id', req.params.id)
       .select()
       .single();

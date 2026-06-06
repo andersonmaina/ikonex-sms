@@ -16,6 +16,7 @@ interface Student {
     name: string;
     code: string;
   };
+  status?: string;
 }
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -184,7 +185,11 @@ const StudentDirectory = () => {
                       <span className="font-body-md text-body-md">{student.class_streams?.name || 'Unassigned'}</span>
                     </td>
                     <td className="px-lg py-md">
-                      <span className="px-md py-1 rounded-full bg-secondary-container/30 text-on-secondary-container text-label-sm font-bold border border-secondary-container/50">ACTIVE</span>
+                      {student.status === 'INACTIVE' ? (
+                        <span className="px-md py-1 rounded-full bg-error-container/30 text-error text-label-sm font-bold border border-error/50">INACTIVE</span>
+                      ) : (
+                        <span className="px-md py-1 rounded-full bg-secondary-container/30 text-on-secondary-container text-label-sm font-bold border border-secondary-container/50">ACTIVE</span>
+                      )}
                     </td>
                     <td className="px-lg py-md text-right">
                       <div className="flex justify-end gap-xs opacity-40 group-hover:opacity-100 transition-opacity">

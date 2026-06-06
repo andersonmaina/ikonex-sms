@@ -31,6 +31,7 @@ export const CreateStudentModal = ({ isOpen, onClose, studentToEdit }: CreateStu
   const [admissionNum, setAdmissionNum] = React.useState(studentToEdit?.admission_number || '');
   const [streamId, setStreamId] = React.useState(studentToEdit?.stream_id || '');
   const [dob, setDob] = React.useState(studentToEdit?.dob || '');
+  const [status, setStatus] = React.useState(studentToEdit?.status || 'ACTIVE');
 
   React.useEffect(() => {
     if (isOpen) {
@@ -39,6 +40,7 @@ export const CreateStudentModal = ({ isOpen, onClose, studentToEdit }: CreateStu
       setAdmissionNum(studentToEdit?.admission_number || '');
       setStreamId(studentToEdit?.stream_id || '');
       setDob(studentToEdit?.dob || '');
+      setStatus(studentToEdit?.status || 'ACTIVE');
     }
   }, [isOpen, studentToEdit]);
 
@@ -70,6 +72,7 @@ export const CreateStudentModal = ({ isOpen, onClose, studentToEdit }: CreateStu
       admission_number: admissionNum,
       stream_id: streamId || null,
       dob: dob || null,
+      status: status,
     });
   };
 
@@ -147,7 +150,37 @@ export const CreateStudentModal = ({ isOpen, onClose, studentToEdit }: CreateStu
             />
           </div>
           
-          <div className="pt-md mt-lg border-t border-outline-variant flex justify-end gap-sm">
+          {studentToEdit && (
+            <div className="col-span-2">
+              <label className="block text-label-md font-bold text-on-surface-variant mb-sm">Student Status</label>
+              <div className="flex items-center gap-md">
+                <button
+                  type="button"
+                  onClick={() => setStatus('ACTIVE')}
+                  className={`flex-1 py-sm rounded-lg font-label-md border transition-all ${
+                    status === 'ACTIVE' 
+                      ? 'bg-secondary-container/30 border-secondary text-secondary font-bold' 
+                      : 'bg-surface-container-low border-outline-variant text-on-surface-variant'
+                  }`}
+                >
+                  Active
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStatus('INACTIVE')}
+                  className={`flex-1 py-sm rounded-lg font-label-md border transition-all ${
+                    status === 'INACTIVE' 
+                      ? 'bg-error-container/30 border-error text-error font-bold' 
+                      : 'bg-surface-container-low border-outline-variant text-on-surface-variant'
+                  }`}
+                >
+                  Inactive
+                </button>
+              </div>
+            </div>
+          )}
+          
+          <div className="pt-md border-t border-outline-variant flex justify-end gap-sm">
             <button 
               type="button" 
               onClick={onClose}
