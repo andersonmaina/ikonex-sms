@@ -18,22 +18,39 @@ async function launchBrowser() {
     ]
   };
 
+  const originalEnvPath = process.env.PUPPETEER_EXECUTABLE_PATH;
+
   try {
     return await puppeteer.launch({
       ...options,
-      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
+      executablePath: originalEnvPath || undefined,
     });
   } catch (error) {
-    console.warn(`Failed to launch browser with path '${process.env.PUPPETEER_EXECUTABLE_PATH}':`, error);
+    console.warn(`Failed to launch browser with path '${originalEnvPath}':`, error);
+    
+    // Temporarily delete env var so Puppeteer doesn't read it under the hood during fallbacks
+    if (process.env.PUPPETEER_EXECUTABLE_PATH) {
+      delete process.env.PUPPETEER_EXECUTABLE_PATH;
+    }
+
     try {
       console.log("Attempting fallback to 'chromium' binary in PATH...");
-      return await puppeteer.launch({
+      const browser = await puppeteer.launch({
         ...options,
         executablePath: 'chromium',
       });
+      process.env.PUPPETEER_EXECUTABLE_PATH = originalEnvPath;
+      return browser;
     } catch (fallbackError) {
       console.warn("Failed to launch with 'chromium' in PATH. Trying default Puppeteer launch...");
-      return await puppeteer.launch(options);
+      try {
+        const browser = await puppeteer.launch(options);
+        process.env.PUPPETEER_EXECUTABLE_PATH = originalEnvPath;
+        return browser;
+      } catch (finalError) {
+        process.env.PUPPETEER_EXECUTABLE_PATH = originalEnvPath;
+        throw finalError;
+      }
     }
   }
 }
