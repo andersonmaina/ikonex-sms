@@ -21,23 +21,11 @@ router.get('/student/:id/pdf', async (req: Request, res: Response): Promise<void
     if (studentError) throw studentError;
 
     // 2. Fetch Grades Data
-    const { data: grades, error: gradesError } = await supabase
-      .from('student_grades')
-      .select(`
-        score,
-        assessments ( id, title, max_score, type, date ),
-        subjects!student_grades_subject_id_fkey ( id, name, code )
-      `)
-      .eq('student_id', studentId);
-    
-    // Fallback if subjects mapping isn't directly on grades yet (based on schema)
-    // Wait, let's just fetch assessments and we can display them.
-    // Actually, student_grades connects to assessments, and assessments connect to subjects.
     const { data: gradesDetailed, error: gradesDetailedError } = await supabase
       .from('student_grades')
       .select(`
         score,
-        assessments ( id, title, max_score, type, date, subject_id, subjects (name, code) )
+        assessments ( id, title, max_score, type, date )
       `)
       .eq('student_id', studentId);
 
@@ -54,7 +42,7 @@ router.get('/student/:id/pdf', async (req: Request, res: Response): Promise<void
       totalMax += max;
       return {
         assessment: g.assessments?.title,
-        subject: g.assessments?.subjects?.name || 'General',
+        subject: 'General',
         type: g.assessments?.type,
         score: score,
         max: max,
@@ -67,11 +55,11 @@ router.get('/student/:id/pdf', async (req: Request, res: Response): Promise<void
     const finalGrade = getGradeFromPercentage(finalPct);
 
     // 4. Render HTML Template
-    const templatePath = path.join(__dirname, '../templates/report_card.ejs');
+    const templatePath = path.join(process.cwd(), 'src', 'templates', 'report_card.ejs');
     const html = await ejs.renderFile(templatePath, {
       student: {
         name: `${student.first_name} ${student.last_name}`,
-        id: student.student_id_number,
+        id: student.admission_number,
         stream: student.class_streams?.name || 'N/A',
         enrollmentDate: new Date(student.enrollment_date).toLocaleDateString()
       },
@@ -87,11 +75,16 @@ router.get('/student/:id/pdf', async (req: Request, res: Response): Promise<void
     // 5. Generate PDF with Puppeteer
     const browser = await puppeteer.launch({
       headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox'] // Critical for server environments like Railway
+      args: [
+        '--no-sandbox', 
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-gpu'
+      ] // Critical for server environments like Railway
     });
     
     const page = await browser.newPage();
-    await page.setContent(html, { waitUntil: 'networkidle0' });
+    await page.setContent(html, { waitUntil: 'load' });
     
     const pdfBuffer = await page.pdf({
       format: 'A4',
