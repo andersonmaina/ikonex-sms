@@ -65,8 +65,7 @@ router.get('/student/:id/pdf', async (req: Request, res: Response): Promise<void
       grades: processedGrades,
       summary: {
         average: finalPct.toFixed(1),
-        grade: finalGrade.label,
-        gpa: finalGrade.gpaValue.toFixed(1)
+        grade: finalGrade.label
       },
       dateGenerated: new Date().toLocaleDateString()
     });

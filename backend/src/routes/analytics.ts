@@ -19,7 +19,7 @@ router.get('/overview', async (req: Request, res: Response): Promise<void> => {
       .select('*', { count: 'exact', head: true });
     if (err2) throw err2;
 
-    // 3. Average GPA proxy (average of all scores)
+    // 3. Average grade proxy (average of all scores)
     const { data: scores, error: err3 } = await supabase
       .from('student_grades')
       .select('score, assessments(max_score)');
@@ -32,18 +32,18 @@ router.get('/overview', async (req: Request, res: Response): Promise<void> => {
       totalMax += Number(g.assessments?.max_score || 100);
     });
 
-    // Calculate a rough GPA out of 4.0 based on percentage
+    // Calculate average grade based on percentage
     const percentage = totalMax > 0 ? (totalScore / totalMax) * 100 : 0;
     
-    // Use our new constants to get the precise GPA value for the school average!
+    // Use our constants to get the average grade
     const gradeObj = getGradeFromPercentage(percentage);
-    const avgGPA = totalMax > 0 ? gradeObj.gpaValue.toFixed(1) : "0.0";
+    const avgGrade = totalMax > 0 ? gradeObj.label : "N/A";
 
     res.json({
       data: {
         totalStudents: studentCount || 0,
         activeStreams: streamCount || 0,
-        averageGPA: avgGPA
+        averageGrade: avgGrade
       }
     });
   } catch (err: any) {

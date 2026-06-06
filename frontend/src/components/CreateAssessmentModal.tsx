@@ -21,7 +21,7 @@ export const CreateAssessmentModal: React.FC<CreateAssessmentModalProps> = ({ is
   const queryClient = useQueryClient();
   const [title, setTitle] = useState('');
   const [type, setType] = useState('Exam');
-  const [maxScore, setMaxScore] = useState('100');
+  const [maxScore, setMaxScore] = useState('70');
   const [streamId, setStreamId] = useState('');
   const [subjectId, setSubjectId] = useState('');
   const [date, setDate] = useState('');
@@ -122,7 +122,11 @@ export const CreateAssessmentModal: React.FC<CreateAssessmentModalProps> = ({ is
               <label className="block text-label-md font-bold text-on-surface-variant mb-1">Type</label>
               <select 
                 value={type}
-                onChange={(e) => setType(e.target.value)}
+                onChange={(e) => {
+                  const newType = e.target.value;
+                  setType(newType);
+                  setMaxScore(newType === 'Exam' ? '70' : '30');
+                }}
                 className="w-full px-md py-sm bg-surface-container-low border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all font-body-md"
               >
                 <option value="Exam">Exam</option>
@@ -136,8 +140,8 @@ export const CreateAssessmentModal: React.FC<CreateAssessmentModalProps> = ({ is
                 type="number"
                 min="1" 
                 value={maxScore}
-                onChange={(e) => setMaxScore(e.target.value)}
-                className="w-full px-md py-sm bg-surface-container-low border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all font-body-md"
+                readOnly
+                className="w-full px-md py-sm bg-surface-container-low border border-outline-variant rounded-lg bg-gray-100 cursor-not-allowed opacity-70 outline-none transition-all font-body-md"
               />
             </div>
           </div>

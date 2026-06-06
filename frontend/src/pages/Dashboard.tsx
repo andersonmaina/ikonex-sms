@@ -64,7 +64,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Average GPA */}
+        {/* Average Grade */}
         <div className="bg-surface-container-lowest p-lg rounded-xl border border-outline-variant shadow-sm flex flex-col justify-between h-40 group hover:shadow-md transition-shadow">
           <div className="flex justify-between items-start">
             <div className="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center text-primary-container group-hover:bg-primary-container group-hover:text-on-primary-container transition-colors">
@@ -72,9 +72,9 @@ const Dashboard = () => {
             </div>
           </div>
           <div>
-            <p className="text-label-md text-on-surface-variant">School Average GPA (Est.)</p>
-            <h3 className="font-headline-xl text-headline-xl text-primary">
-              {isLoading ? '...' : stats?.averageGPA || '0.0'}
+            <p className="text-label-md text-on-surface-variant">School Average Grade</p>
+            <h3 className="text-display-sm font-bold text-on-surface mt-xs">
+              {isLoading ? '...' : stats?.averageGrade || 'N/A'}
             </h3>
           </div>
         </div>

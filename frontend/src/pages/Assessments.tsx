@@ -179,7 +179,7 @@ const Assessments = () => {
         <div>
           <h2 className="font-headline-xl text-headline-xl text-primary">Assessments & Data Entry</h2>
           <p className="font-body-md text-body-md text-on-surface-variant max-w-2xl mt-sm">
-            Create assessment tasks and securely enter grades for student cohorts. Data automatically recalculates GPAs upon saving.
+            Create assessment tasks and securely enter grades for student cohorts. Data automatically recalculates grades upon saving.
           </p>
         </div>
         {!selectedAssessment && (

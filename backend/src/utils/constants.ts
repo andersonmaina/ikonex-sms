@@ -5,11 +5,11 @@ export const GRADING_SYSTEM = {
   // Letter grades and their minimum percentage thresholds
   // Note: These must remain sorted from highest to lowest!
   GRADES: [
-    { label: 'A', minPct: 70, gpaValue: 4.0 },
-    { label: 'B', minPct: 60, gpaValue: 3.0 },
-    { label: 'C', minPct: 50, gpaValue: 2.0 },
-    { label: 'D', minPct: 40, gpaValue: 1.0 },
-    { label: 'F', minPct: 0,  gpaValue: 0.0 }
+    { label: 'A', minPct: 70 },
+    { label: 'B', minPct: 60 },
+    { label: 'C', minPct: 50 },
+    { label: 'D', minPct: 40 },
+    { label: 'F', minPct: 0  }
   ]
 };
 
