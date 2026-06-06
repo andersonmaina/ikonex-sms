@@ -7,6 +7,37 @@ import { getGradeFromPercentage, GRADING_SYSTEM } from '../utils/constants';
 
 const router = Router();
 
+async function launchBrowser() {
+  const options = {
+    headless: true,
+    args: [
+      '--no-sandbox', 
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-gpu'
+    ]
+  };
+
+  try {
+    return await puppeteer.launch({
+      ...options,
+      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
+    });
+  } catch (error) {
+    console.warn(`Failed to launch browser with path '${process.env.PUPPETEER_EXECUTABLE_PATH}':`, error);
+    try {
+      console.log("Attempting fallback to 'chromium' binary in PATH...");
+      return await puppeteer.launch({
+        ...options,
+        executablePath: 'chromium',
+      });
+    } catch (fallbackError) {
+      console.warn("Failed to launch with 'chromium' in PATH. Trying default Puppeteer launch...");
+      return await puppeteer.launch(options);
+    }
+  }
+}
+
 router.get('/student/:id/pdf', async (req: Request, res: Response): Promise<void> => {
   try {
     const studentId = req.params.id;
@@ -71,16 +102,7 @@ router.get('/student/:id/pdf', async (req: Request, res: Response): Promise<void
     });
 
     // 5. Generate PDF with Puppeteer
-    const browser = await puppeteer.launch({
-      headless: true,
-      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
-      args: [
-        '--no-sandbox', 
-        '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage',
-        '--disable-gpu'
-      ] // Critical for server environments like Railway
-    });
+    const browser = await launchBrowser();
     
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: 'load' });
@@ -168,16 +190,7 @@ router.get('/analytics/class-performance/pdf', async (req: Request, res: Respons
       generatedDate: new Date().toLocaleDateString()
     });
 
-    const browser = await puppeteer.launch({
-      headless: true,
-      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
-      args: [
-        '--no-sandbox', 
-        '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage',
-        '--disable-gpu'
-      ]
-    });
+    const browser = await launchBrowser();
     
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: 'load' });
