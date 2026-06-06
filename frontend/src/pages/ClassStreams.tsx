@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { GlassCard } from '../components/ui/GlassCard';
 import { CreateStreamModal } from '../components/CreateStreamModal';
@@ -113,6 +114,13 @@ const ClassStreams = () => {
                     <span className="material-symbols-outlined text-[16px]">group</span>
                     <span className="font-label-md">Cap: {stream.capacity}</span>
                  </div>
+                 <Link 
+                   to={`/analytics?streamId=${stream.id}`}
+                   className="text-primary font-label-md flex items-center gap-xs hover:underline hover:brightness-110 transition-all"
+                 >
+                   View performance
+                   <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+                 </Link>
               </div>
             </GlassCard>
           ))}
