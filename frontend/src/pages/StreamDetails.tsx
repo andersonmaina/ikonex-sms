@@ -31,7 +31,7 @@ const StreamDetails = () => {
   });
 
   // Fetch Stream Performance
-  const { data: performance, isLoading: isLoadingPerformance } = useQuery({
+  const { data: performance } = useQuery({
     queryKey: ['analytics', id],
     queryFn: async () => {
       const { data } = await axios.get(`${API_URL}/api/analytics/class-performance`, {
