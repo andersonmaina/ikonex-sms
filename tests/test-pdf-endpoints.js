@@ -1,7 +1,10 @@
-import { createClient } from '@supabase/supabase-js';
-import dotenv from 'dotenv';
-import path from 'path';
-import fs from 'fs';
+const path = require('path');
+// Inject backend's node_modules into the search paths
+module.paths.push(path.join(__dirname, '..', 'backend', 'node_modules'));
+
+const { createClient } = require('@supabase/supabase-js');
+const dotenv = require('dotenv');
+const fs = require('fs');
 
 // Load environment variables from the backend folder
 dotenv.config({ path: path.join(__dirname, '..', 'backend', '.env') });
