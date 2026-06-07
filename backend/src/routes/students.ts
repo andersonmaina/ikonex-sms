@@ -15,6 +15,10 @@ router.get('/', async (req: Request, res: Response): Promise<void> => {
           id,
           name,
           code
+        ),
+        student_grades (
+          score,
+          assessments ( max_score )
         )
       `)
       .order('created_at', { ascending: false });
@@ -26,7 +30,27 @@ router.get('/', async (req: Request, res: Response): Promise<void> => {
     const { data, error } = await query;
     
     if (error) throw error;
-    res.json({ data });
+
+    const studentsWithAvg = data?.map((student: any) => {
+      let totalPct = 0;
+      let gradeCount = 0;
+      student.student_grades?.forEach((g: any) => {
+        const score = g.score || 0;
+        const max = g.assessments?.max_score || 100;
+        totalPct += (score / max) * 100;
+        gradeCount++;
+      });
+      const avgScore = gradeCount > 0 ? (totalPct / gradeCount).toFixed(1) : 0;
+      
+      delete student.student_grades;
+      
+      return {
+        ...student,
+        avgScore: Number(avgScore)
+      };
+    });
+
+    res.json({ data: studentsWithAvg });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }

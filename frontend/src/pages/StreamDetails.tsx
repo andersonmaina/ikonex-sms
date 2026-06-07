@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
@@ -7,6 +8,7 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 const StreamDetails = () => {
   const { id } = useParams<{ id: string }>();
+  const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
 
   // Fetch Stream Details
   const { data: stream, isLoading: isLoadingStream } = useQuery({
@@ -45,6 +47,10 @@ const StreamDetails = () => {
   if (isLoadingStream) {
     return <div className="p-xl text-center"><span className="material-symbols-outlined animate-spin text-primary">autorenew</span></div>;
   }
+
+  const sortedStudents = students ? [...students].sort((a: any, b: any) => {
+    return sortOrder === 'desc' ? b.avgScore - a.avgScore : a.avgScore - b.avgScore;
+  }) : [];
 
   if (!stream) {
     return <div className="p-xl text-center text-error">Stream not found.</div>;
@@ -109,19 +115,26 @@ const StreamDetails = () => {
               <tr className="bg-surface-container-low text-label-md text-primary border-b border-outline-variant uppercase tracking-wider">
                 <th className="px-lg py-4">Student Name</th>
                 <th className="px-lg py-4">Admission #</th>
+                <th className="px-lg py-4 cursor-pointer hover:bg-surface-container flex items-center gap-2" onClick={() => setSortOrder(prev => prev === 'desc' ? 'asc' : 'desc')}>
+                  Avg Score
+                  <span className="material-symbols-outlined text-[16px]">
+                    {sortOrder === 'desc' ? 'arrow_downward' : 'arrow_upward'}
+                  </span>
+                </th>
                 <th className="px-lg py-4 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-outline-variant/30">
               {isLoadingStudents ? (
-                <tr><td colSpan={3} className="p-lg text-center">Loading students...</td></tr>
-              ) : students?.length === 0 ? (
-                <tr><td colSpan={3} className="p-lg text-center text-on-surface-variant">No students in this stream.</td></tr>
+                <tr><td colSpan={4} className="p-lg text-center">Loading students...</td></tr>
+              ) : sortedStudents.length === 0 ? (
+                <tr><td colSpan={4} className="p-lg text-center text-on-surface-variant">No students in this stream.</td></tr>
               ) : (
-                students?.map((student: any) => (
+                sortedStudents.map((student: any) => (
                   <tr key={student.id} className="hover:bg-surface-container-low transition-colors">
                     <td className="px-lg py-md font-bold">{student.first_name} {student.last_name}</td>
                     <td className="px-lg py-md font-mono text-sm">{student.admission_number}</td>
+                    <td className="px-lg py-md font-bold text-primary">{student.avgScore}%</td>
                     <td className="px-lg py-md text-right">
                       <Link to={`/students/${student.id}`} className="text-primary hover:underline font-label-sm">
                         View Profile
