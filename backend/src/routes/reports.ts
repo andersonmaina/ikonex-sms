@@ -95,13 +95,32 @@ router.get('/student/:id/pdf', async (req: Request, res: Response): Promise<void
       .from('student_grades')
       .select(`
         score,
-        assessments ( id, title, max_score, type, date, subjects ( name ) )
+        assessments ( id, title, max_score, type, date )
       `)
       .eq('student_id', studentId);
 
     if (gradesDetailedError) throw gradesDetailedError;
 
-    // 3. Process Data for Template
+    // 3. Fetch Subject names for each assessment (two-step to avoid deep nested embed issues)
+    const assessmentIds = gradesDetailed
+      ?.map((g: any) => g.assessments?.id)
+      .filter(Boolean) as string[];
+
+    const subjectByAssessmentId: Record<string, string> = {};
+    if (assessmentIds && assessmentIds.length > 0) {
+      const { data: assessmentsWithSubjects } = await supabase
+        .from('assessments')
+        .select('id, subjects ( name )')
+        .in('id', assessmentIds);
+
+      assessmentsWithSubjects?.forEach((a: any) => {
+        if (a.subjects?.name) {
+          subjectByAssessmentId[a.id] = a.subjects.name;
+        }
+      });
+    }
+
+    // 4. Process Data for Template
     let totalScore = 0;
     let totalMax = 0;
     const processedGrades = gradesDetailed?.map((g: any) => {
@@ -112,7 +131,7 @@ router.get('/student/:id/pdf', async (req: Request, res: Response): Promise<void
       totalMax += max;
       return {
         assessment: g.assessments?.title,
-        subject: g.assessments?.subjects?.name || 'General',
+        subject: subjectByAssessmentId[g.assessments?.id] || 'General',
         type: g.assessments?.type,
         score: score,
         max: max,
