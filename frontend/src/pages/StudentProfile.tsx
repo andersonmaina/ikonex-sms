@@ -1,5 +1,5 @@
 import React from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { useParams, Link } from 'react-router-dom';
 import { getGradeLetter, getGradeColorClasses } from '../lib/grading';
@@ -14,6 +14,7 @@ const fetchStudentProfile = async (id: string) => {
 const StudentProfile = () => {
   const { id } = useParams<{ id: string }>();
   const [isDownloading, setIsDownloading] = React.useState(false);
+  const queryClient = useQueryClient();
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['studentProfile', id],
@@ -58,6 +59,13 @@ const StudentProfile = () => {
           <h2 className="font-headline-xl text-headline-xl text-primary">Student Analytics & Reporting</h2>
         </div>
         <div className="flex gap-md">
+          <button
+            onClick={() => queryClient.invalidateQueries()}
+            className="p-3 text-on-surface-variant hover:text-primary transition-colors bg-surface-container-low hover:bg-surface-container border border-outline-variant rounded-lg flex items-center justify-center shadow-sm"
+            title="Refresh Data"
+          >
+            <span className="material-symbols-outlined">refresh</span>
+          </button>
           <button 
             disabled={isDownloading}
             onClick={async () => {
