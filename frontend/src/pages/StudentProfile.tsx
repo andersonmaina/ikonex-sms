@@ -43,11 +43,12 @@ const StudentProfile = () => {
   const maxTotalScore = grades?.reduce((sum: number, g: any) => sum + Number(g.assessments?.max_score || 100), 0) || 0;
   const cumulativeAverage = maxTotalScore > 0 ? ((totalScore / maxTotalScore) * 100).toFixed(1) : '0.0';
 
+  // Matches backend GRADING_SYSTEM constants exactly
   const getGradeLetter = (percentage: number) => {
-    if (percentage >= 90) return 'A';
-    if (percentage >= 80) return 'B';
-    if (percentage >= 70) return 'C';
-    if (percentage >= 60) return 'D';
+    if (percentage >= 70) return 'A';
+    if (percentage >= 60) return 'B';
+    if (percentage >= 50) return 'C';
+    if (percentage >= 40) return 'D';
     return 'F';
   };
 
