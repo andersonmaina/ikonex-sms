@@ -2,6 +2,7 @@ import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useParams, Link } from 'react-router-dom';
+import { getGradeLetter, getGradeColorClasses } from '../lib/grading';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -37,15 +38,6 @@ const StudentProfile = () => {
   }
 
   const { student, grades } = data;
-
-  // Matches backend GRADING_SYSTEM constants exactly
-  const getGradeLetter = (percentage: number) => {
-    if (percentage >= 70) return 'A';
-    if (percentage >= 60) return 'B';
-    if (percentage >= 50) return 'C';
-    if (percentage >= 40) return 'D';
-    return 'F';
-  };
 
   // Calculate Cumulative Average
   const totalScore = grades?.reduce((sum: number, g: any) => sum + Number(g.score), 0) || 0;
@@ -159,10 +151,7 @@ const StudentProfile = () => {
               </div>
               <div>
                 <p className="text-[11px] font-bold text-outline uppercase mb-1">Overall Grade</p>
-                <span className={`inline-block mt-1 px-md py-xs rounded font-headline-md font-bold ${
-                  overallGrade === 'A' || overallGrade === 'B' ? 'bg-secondary/10 text-secondary' :
-                  overallGrade === 'C' ? 'bg-primary/10 text-primary' : 'bg-error/10 text-error'
-                }`}>{overallGrade}</span>
+                <span className={`inline-block mt-1 px-md py-xs rounded font-headline-md font-bold ${getGradeColorClasses(overallGrade)}`}>{overallGrade}</span>
               </div>
             </div>
 
@@ -189,6 +178,7 @@ const StudentProfile = () => {
                       const max = g.assessments?.max_score || 100;
                       const pct = (g.score / max) * 100;
                       const letter = getGradeLetter(pct);
+                      const colorClasses = getGradeColorClasses(letter);
                       
                       return (
                         <tr key={g.id} className="hover:bg-surface-container/50 transition-colors">
@@ -196,10 +186,7 @@ const StudentProfile = () => {
                           <td className="px-md py-md border-b border-outline-variant text-center text-on-surface-variant uppercase text-sm">{g.assessments?.type}</td>
                           <td className="px-md py-md border-b border-outline-variant text-center font-bold">{g.score} / {max}</td>
                           <td className="px-md py-md border-b border-outline-variant text-center">
-                            <span className={`px-sm py-xs rounded font-bold ${
-                              letter === 'A' || letter === 'B' ? 'bg-secondary/10 text-secondary' :
-                              letter === 'C' ? 'bg-primary/10 text-primary' : 'bg-error/10 text-error'
-                            }`}>
+                            <span className={`px-sm py-xs rounded font-bold ${colorClasses}`}>
                               {letter}
                             </span>
                           </td>

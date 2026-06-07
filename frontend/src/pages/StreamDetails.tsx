@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { GlassCard } from '../components/ui/GlassCard';
+import { getGradeLetter, getGradeColorClasses } from '../lib/grading';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -134,7 +135,12 @@ const StreamDetails = () => {
                   <tr key={student.id} className="hover:bg-surface-container-low transition-colors">
                     <td className="px-lg py-md font-bold">{student.first_name} {student.last_name}</td>
                     <td className="px-lg py-md font-mono text-sm">{student.admission_number}</td>
-                    <td className="px-lg py-md font-bold text-primary">{student.avgScore}%</td>
+                    <td className="px-lg py-md font-bold text-primary">
+                      {student.avgScore}%
+                      <span className={`ml-sm px-sm py-xs rounded text-xs font-bold ${getGradeColorClasses(getGradeLetter(student.avgScore))}`}>
+                        {getGradeLetter(student.avgScore)}
+                      </span>
+                    </td>
                     <td className="px-lg py-md text-right">
                       <Link to={`/students/${student.id}`} className="text-primary hover:underline font-label-sm">
                         View Profile
