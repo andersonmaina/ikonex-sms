@@ -214,10 +214,6 @@ const StudentProfile = () => {
                     <td colSpan={2}></td>
                     <td className="px-md py-lg text-center font-headline-md">
                       {cumulativeAverage}%
-                      <span className={`ml-sm px-sm py-xs rounded font-bold text-sm ${
-                        overallGrade === 'A' || overallGrade === 'B' ? 'bg-secondary/20 text-secondary' :
-                        overallGrade === 'C' ? 'bg-white/20 text-white' : 'bg-error/20 text-error'
-                      }`}>{overallGrade}</span>
                     </td>
                   </tr>
                 </tfoot>
