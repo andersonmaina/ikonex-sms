@@ -177,7 +177,10 @@ router.get('/student/:id/pdf', async (req: Request, res: Response): Promise<void
     res.set({
       'Content-Type': 'application/pdf',
       'Content-Disposition': `attachment; filename="${student.first_name}_${student.last_name}_ReportCard.pdf"`,
-      'Content-Length': pdfBuffer.length
+      'Content-Length': pdfBuffer.length,
+      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0'
     });
     
     res.end(pdfBuffer);
@@ -264,7 +267,10 @@ router.get('/analytics/class-performance/pdf', async (req: Request, res: Respons
     res.set({
       'Content-Type': 'application/pdf',
       'Content-Disposition': `attachment; filename="ClassPerformanceAnalytics.pdf"`,
-      'Content-Length': pdfBuffer.length
+      'Content-Length': pdfBuffer.length,
+      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0'
     });
     
     res.end(pdfBuffer);
