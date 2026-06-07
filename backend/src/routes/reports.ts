@@ -95,7 +95,7 @@ router.get('/student/:id/pdf', async (req: Request, res: Response): Promise<void
       .from('student_grades')
       .select(`
         score,
-        assessments ( id, title, max_score, type, date )
+        assessments ( id, title, max_score, type, date, subjects ( name ) )
       `)
       .eq('student_id', studentId);
 
@@ -112,7 +112,7 @@ router.get('/student/:id/pdf', async (req: Request, res: Response): Promise<void
       totalMax += max;
       return {
         assessment: g.assessments?.title,
-        subject: 'General',
+        subject: g.assessments?.subjects?.name || 'General',
         type: g.assessments?.type,
         score: score,
         max: max,
