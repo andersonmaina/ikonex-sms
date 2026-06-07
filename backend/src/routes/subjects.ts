@@ -25,20 +25,21 @@ router.get('/', async (req: Request, res: Response): Promise<void> => {
     if (error) throw error;
 
     const subjectsWithPerformance = data?.map((subject: any) => {
-      let totalPct = 0;
+      let totalScore = 0;
+      let totalMax = 0;
       let gradeCount = 0;
 
       subject.assessments?.forEach((assessment: any) => {
         const max = assessment.max_score || 100;
         assessment.student_grades?.forEach((g: any) => {
-          totalPct += (g.score / max) * 100;
+          totalScore += g.score || 0;
+          totalMax += max;
           gradeCount++;
         });
       });
 
-      const avgScore = gradeCount > 0 ? parseFloat((totalPct / gradeCount).toFixed(1)) : null;
+      const avgScore = totalMax > 0 ? parseFloat(((totalScore / totalMax) * 100).toFixed(1)) : null;
 
-      // Remove raw assessment data from response
       const { assessments, ...rest } = subject;
 
       return { ...rest, avgScore, totalGrades: gradeCount };

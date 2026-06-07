@@ -56,32 +56,32 @@ router.get('/class-performance', async (req: Request, res: Response): Promise<vo
     const { data: grades, error } = await query;
     if (error) throw error;
 
-    // Calculate stats
+    // Calculate stats using weighted average: sum(scores) / sum(max_scores)
     let passed = 0;
     let failed = 0;
+    let totalScore = 0;
+    let totalMax = 0;
     
-    // Dynamically initialize distribution based on constants
     const distribution: Record<string, number> = {};
     GRADING_SYSTEM.GRADES.forEach(g => {
       distribution[g.label] = 0;
     });
 
-    let totalPct = 0;
-    
     grades?.forEach((g: any) => {
-      const pct = (g.score / (g.assessments?.max_score || 100)) * 100;
-      totalPct += pct;
-      
-      // Determine Pass/Fail from constants
+      const score = g.score;
+      const max = g.assessments?.max_score || 100;
+      const pct = (score / max) * 100;
+      totalScore += score;
+      totalMax += max;
+
       if (pct >= GRADING_SYSTEM.PASS_THRESHOLD) passed++;
       else failed++;
 
-      // Determine Letter Grade dynamically
       const grade = getGradeFromPercentage(pct);
       distribution[grade.label]++;
     });
 
-    const avgScore = grades && grades.length > 0 ? (totalPct / grades.length).toFixed(1) : 0;
+    const avgScore = totalMax > 0 ? ((totalScore / totalMax) * 100).toFixed(1) : 0;
 
     res.json({
       data: {

@@ -32,21 +32,19 @@ router.get('/', async (req: Request, res: Response): Promise<void> => {
     if (error) throw error;
 
     const studentsWithAvg = data?.map((student: any) => {
-      let totalPct = 0;
-      let gradeCount = 0;
+      let totalScore = 0;
+      let totalMax = 0;
       student.student_grades?.forEach((g: any) => {
-        const score = g.score || 0;
-        const max = g.assessments?.max_score || 100;
-        totalPct += (score / max) * 100;
-        gradeCount++;
+        totalScore += g.score || 0;
+        totalMax += g.assessments?.max_score || 100;
       });
-      const avgScore = gradeCount > 0 ? (totalPct / gradeCount).toFixed(1) : 0;
+      const avgScore = totalMax > 0 ? parseFloat(((totalScore / totalMax) * 100).toFixed(1)) : 0;
       
       delete student.student_grades;
       
       return {
         ...student,
-        avgScore: Number(avgScore)
+        avgScore
       };
     });
 
