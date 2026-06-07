@@ -38,11 +38,6 @@ const StudentProfile = () => {
 
   const { student, grades } = data;
 
-  // Calculate Cumulative Average (simplistic calculation based on available data)
-  const totalScore = grades?.reduce((sum: number, g: any) => sum + Number(g.score), 0) || 0;
-  const maxTotalScore = grades?.reduce((sum: number, g: any) => sum + Number(g.assessments?.max_score || 100), 0) || 0;
-  const cumulativeAverage = maxTotalScore > 0 ? ((totalScore / maxTotalScore) * 100).toFixed(1) : '0.0';
-
   // Matches backend GRADING_SYSTEM constants exactly
   const getGradeLetter = (percentage: number) => {
     if (percentage >= 70) return 'A';
@@ -51,6 +46,12 @@ const StudentProfile = () => {
     if (percentage >= 40) return 'D';
     return 'F';
   };
+
+  // Calculate Cumulative Average
+  const totalScore = grades?.reduce((sum: number, g: any) => sum + Number(g.score), 0) || 0;
+  const maxTotalScore = grades?.reduce((sum: number, g: any) => sum + Number(g.assessments?.max_score || 100), 0) || 0;
+  const cumulativeAverage = maxTotalScore > 0 ? ((totalScore / maxTotalScore) * 100).toFixed(1) : '0.0';
+  const overallGrade = getGradeLetter(Number(cumulativeAverage));
 
   return (
     <div className="p-lg max-w-[1200px] mx-auto w-full space-y-xl">
@@ -143,7 +144,7 @@ const StudentProfile = () => {
 
           {/* Body */}
           <div className="p-xl bg-white space-y-lg">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-lg border-b border-outline-variant pb-lg">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-lg border-b border-outline-variant pb-lg">
               <div>
                 <p className="text-[11px] font-bold text-outline uppercase mb-1">Student Full Name</p>
                 <p className="font-headline-md text-primary">{student.first_name} {student.last_name}</p>
@@ -155,6 +156,13 @@ const StudentProfile = () => {
               <div>
                 <p className="text-[11px] font-bold text-outline uppercase mb-1">Class Stream</p>
                 <p className="font-headline-md text-primary">{student.class_streams?.name || 'Unassigned'}</p>
+              </div>
+              <div>
+                <p className="text-[11px] font-bold text-outline uppercase mb-1">Overall Grade</p>
+                <span className={`inline-block mt-1 px-md py-xs rounded font-headline-md font-bold ${
+                  overallGrade === 'A' || overallGrade === 'B' ? 'bg-secondary/10 text-secondary' :
+                  overallGrade === 'C' ? 'bg-primary/10 text-primary' : 'bg-error/10 text-error'
+                }`}>{overallGrade}</span>
               </div>
             </div>
 
@@ -204,7 +212,13 @@ const StudentProfile = () => {
                   <tr className="bg-primary-container text-on-primary">
                     <td className="px-md py-lg font-bold">CUMULATIVE AVERAGE</td>
                     <td colSpan={2}></td>
-                    <td className="px-md py-lg text-center font-headline-md">{cumulativeAverage}%</td>
+                    <td className="px-md py-lg text-center font-headline-md">
+                      {cumulativeAverage}%
+                      <span className={`ml-sm px-sm py-xs rounded font-bold text-sm ${
+                        overallGrade === 'A' || overallGrade === 'B' ? 'bg-secondary/20 text-secondary' :
+                        overallGrade === 'C' ? 'bg-white/20 text-white' : 'bg-error/20 text-error'
+                      }`}>{overallGrade}</span>
+                    </td>
                   </tr>
                 </tfoot>
               </table>
