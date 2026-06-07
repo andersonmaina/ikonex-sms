@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { CreateSubjectModal } from '../components/CreateSubjectModal';
+import { getGradeLetter, getGradeColorClasses } from '../lib/grading';
 
 interface Subject {
   id: string;
@@ -9,6 +10,8 @@ interface Subject {
   code: string;
   department: string;
   credits: number;
+  avgScore: number | null;
+  totalGrades: number;
   subject_assignments: {
     id: string;
     class_streams: { id: string; name: string; code: string };
@@ -30,6 +33,8 @@ const Subjects = () => {
   const queryClient = useQueryClient();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [subjectToEdit, setSubjectToEdit] = useState<Subject | undefined>(undefined);
+  const [sortBy, setSortBy] = useState<'name' | 'performance'>('name');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
   const { data: subjects, isLoading, isError } = useQuery({
     queryKey: ['subjects'],
@@ -54,6 +59,29 @@ const Subjects = () => {
   const handleDelete = (id: string) => {
     if (window.confirm('Are you sure you want to delete this subject? This action cannot be undone.')) {
       deleteMutation.mutate(id);
+    }
+  };
+
+  const sortedSubjects = useMemo(() => {
+    if (!subjects) return [];
+    return [...subjects].sort((a, b) => {
+      if (sortBy === 'performance') {
+        const aScore = a.avgScore ?? -1;
+        const bScore = b.avgScore ?? -1;
+        return sortOrder === 'desc' ? bScore - aScore : aScore - bScore;
+      }
+      return sortOrder === 'asc'
+        ? a.name.localeCompare(b.name)
+        : b.name.localeCompare(a.name);
+    });
+  }, [subjects, sortBy, sortOrder]);
+
+  const toggleSort = (col: 'name' | 'performance') => {
+    if (sortBy === col) {
+      setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortBy(col);
+      setSortOrder(col === 'performance' ? 'desc' : 'asc');
     }
   };
 
@@ -128,7 +156,25 @@ const Subjects = () => {
       <section className="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-sm">
         <div className="px-lg py-md border-b border-outline-variant bg-surface-container-low flex items-center justify-between">
           <h3 className="font-headline-md text-headline-md text-primary">Academic Subject List</h3>
-
+          <div className="flex items-center gap-sm">
+            <span className="text-label-sm text-on-surface-variant">Sort by:</span>
+            <button
+              onClick={() => toggleSort('name')}
+              className={`px-md py-xs rounded-lg text-label-sm font-bold border transition-all ${
+                sortBy === 'name' ? 'bg-primary text-on-primary border-primary' : 'border-outline-variant text-on-surface-variant hover:bg-surface-container'
+              }`}
+            >
+              Name {sortBy === 'name' ? (sortOrder === 'asc' ? '↑' : '↓') : ''}
+            </button>
+            <button
+              onClick={() => toggleSort('performance')}
+              className={`px-md py-xs rounded-lg text-label-sm font-bold border transition-all ${
+                sortBy === 'performance' ? 'bg-primary text-on-primary border-primary' : 'border-outline-variant text-on-surface-variant hover:bg-surface-container'
+              }`}
+            >
+              Best Performing {sortBy === 'performance' ? (sortOrder === 'desc' ? '↓' : '↑') : ''}
+            </button>
+          </div>
         </div>
         
         <div className="overflow-x-auto">
@@ -136,7 +182,8 @@ const Subjects = () => {
             <thead>
               <tr className="bg-surface-container-low font-label-md text-label-md text-primary border-b border-outline-variant uppercase tracking-wider">
                 <th className="px-lg py-4 font-bold">Subject Code</th>
-                <th className="px-lg py-4 font-bold">Name & Department</th>
+                <th className="px-lg py-4 font-bold">Name &amp; Department</th>
+                <th className="px-lg py-4 font-bold">Avg Score</th>
                 <th className="px-lg py-4 font-bold">Assigned Streams</th>
                 <th className="px-lg py-4 font-bold text-right">Actions</th>
               </tr>
@@ -157,7 +204,7 @@ const Subjects = () => {
                   <td colSpan={4} className="p-xl text-center text-on-surface-variant">No subjects added yet.</td>
                 </tr>
               ) : (
-                subjects?.map((subject) => (
+                sortedSubjects.map((subject) => (
                   <tr key={subject.id} className="hover:bg-surface-container-low/50 transition-colors group">
                     <td className="px-lg py-md">
                       <span className="bg-surface-container-high px-sm py-1 rounded font-mono text-[11px] font-bold text-primary">{subject.code}</span>
@@ -167,6 +214,19 @@ const Subjects = () => {
                         <span className="font-bold text-on-surface">{subject.name}</span>
                         <span className="text-xs text-on-surface-variant">{subject.department || 'General'}</span>
                       </div>
+                    </td>
+                    <td className="px-lg py-md">
+                      {subject.avgScore !== null ? (
+                        <div className="flex items-center gap-sm">
+                          <span className="font-bold text-on-surface">{subject.avgScore}%</span>
+                          <span className={`px-sm py-0.5 rounded text-xs font-bold ${getGradeColorClasses(getGradeLetter(subject.avgScore))}`}>
+                            {getGradeLetter(subject.avgScore)}
+                          </span>
+                          <span className="text-xs text-on-surface-variant">({subject.totalGrades} scores)</span>
+                        </div>
+                      ) : (
+                        <span className="text-xs text-on-surface-variant italic">No data</span>
+                      )}
                     </td>
                     <td className="px-lg py-md">
                       <div className="flex flex-wrap gap-xs">

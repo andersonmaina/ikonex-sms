@@ -3,7 +3,7 @@ import { supabase } from '../supabase';
 
 const router = Router();
 
-// GET all subjects with their assignments
+// GET all subjects with their assignments and average performance score
 router.get('/', async (req: Request, res: Response): Promise<void> => {
   try {
     const { data, error } = await supabase
@@ -13,12 +13,38 @@ router.get('/', async (req: Request, res: Response): Promise<void> => {
         subject_assignments (
           id,
           class_streams (id, name, code)
+        ),
+        assessments (
+          id,
+          max_score,
+          student_grades ( score )
         )
       `)
       .order('name');
     
     if (error) throw error;
-    res.json({ data });
+
+    const subjectsWithPerformance = data?.map((subject: any) => {
+      let totalPct = 0;
+      let gradeCount = 0;
+
+      subject.assessments?.forEach((assessment: any) => {
+        const max = assessment.max_score || 100;
+        assessment.student_grades?.forEach((g: any) => {
+          totalPct += (g.score / max) * 100;
+          gradeCount++;
+        });
+      });
+
+      const avgScore = gradeCount > 0 ? parseFloat((totalPct / gradeCount).toFixed(1)) : null;
+
+      // Remove raw assessment data from response
+      const { assessments, ...rest } = subject;
+
+      return { ...rest, avgScore, totalGrades: gradeCount };
+    });
+
+    res.json({ data: subjectsWithPerformance });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }
